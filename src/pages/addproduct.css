@@ -1,0 +1,8 @@
+.container{
+    font-family:sans-serif;
+    /* color:#182b4f; */
+    font-weight:600;
+}
+.submitbtn:hover{
+    box-shadow: 0 0 5px 3px #EF8354;
+}
