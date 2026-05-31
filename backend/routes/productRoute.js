@@ -146,12 +146,15 @@ router.post("/addproduct", authMiddleware, authorizeRoles("vendor","admin"),uplo
       }
 
         });
-        newProduct.owner=req.user.userId;
+        newProduct.owner=req.user.userId || req.user._id;
         await newProduct.save();
         res.status(201).json(newProduct);
     }catch(err){
         res.status(400).json({message:"validation error" ,error:err.message});
     }
+})
+router.get("addproduct", authMiddleware, authorizeRoles("vendor","admin"), async(req,res)=>{
+    res.json({message:"This is the add product page"});
 })
 
 router.get("/:id",async(req,res)=>{
