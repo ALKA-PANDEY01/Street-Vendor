@@ -48,7 +48,7 @@ app.use((req,res,next)=>{
     next();
 })
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"process.env.VITE_SERVER_URL",
     credentials:true
 }));
 

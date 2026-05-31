@@ -1,4 +1,6 @@
 import { Server } from "socket.io";
+import dotenv from "dotenv";
+dotenv.config();
 
 let io;
 const allowedOrigins = [
@@ -9,7 +11,7 @@ const allowedOrigins = [
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: allowedOrigins,
+            origin: process.env.VITE_SERVER_URL, // Allow requests from the frontend URL
             methods: ["GET", "POST"],
             credentials: true,
         },
