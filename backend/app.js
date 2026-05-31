@@ -48,7 +48,7 @@ app.use((req,res,next)=>{
     next();
 })
 app.use(cors({
-    origin:"process.env.VITE_SERVER_URL",
+    origin:"https://street-vendor-1-02x5.onrender.com",
     credentials:true
 }));
 
