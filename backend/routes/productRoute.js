@@ -153,7 +153,7 @@ router.post("/addproduct", authMiddleware, authorizeRoles("vendor","admin"),uplo
         res.status(400).json({message:"validation error" ,error:err.message});
     }
 })
-router.get("addproduct", authMiddleware, authorizeRoles("vendor","admin"), async(req,res)=>{
+router.get("/addproduct", authMiddleware, authorizeRoles("vendor","admin"), async(req,res)=>{
     res.json({message:"This is the add product page"});
 })
 
