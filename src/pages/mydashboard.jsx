@@ -7,9 +7,7 @@ import {io} from 'socket.io-client';
 import './show.css';
 import {useParams, Link} from "react-router-dom";
 
-const socket = io("http://localhost:5000", {
-    withCredentials: true,
-});
+const socket = io(import.meta.env.VITE_SERVER_URL);
 
 socket.on("connect", () => {
     console.log("Dashboard socket connected:", socket.id);
