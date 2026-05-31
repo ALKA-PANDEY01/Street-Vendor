@@ -75,13 +75,13 @@ function App() {
         <Route path="/" element={<HeroCrousel></HeroCrousel>}></Route>
         {/* <Route path="/" element={<h1 >All products</h1>}></Route> */}
         <Route path="/products" element={<> <Product user={user}></Product></>}></Route>
-        <Route path="/addProduct" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Add New Product</h2><AddProduct></AddProduct></>}></Route>
+        <Route path="/products/addproduct" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Add New Product</h2><AddProduct></AddProduct></>}></Route>
         <Route path="/products/:id" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Viewing Product Details</h2><Show  user={user} refreshCart={refreshCart} ></Show></>}></Route>
         <Route path="/products/:id/edit" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Editing </h2><AddProduct/></>}></Route>
         <Route path="/user/signup" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Sign-Up </h2><Signup></Signup></>}></Route>
         <Route path="/user/login" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Login</h2><Login getUser={getUser}></Login></>}></Route>
         {/* <Route path="/logout" element={<><h2 className="text-center mt-3" style={{color:"#182b4f"}}>Logout</h2></>}></Route> */}
-        <Route path="products/mydashboard" element={<MydashBoard user={user}></MydashBoard>}></Route>
+        <Route path="/products/mydashboard" element={<MydashBoard user={user}></MydashBoard>}></Route>
         <Route path="/cart" element={<Cart cart={cart} refreshCart={refreshCart}></Cart>}></Route>
         <Route path="/orders/myorders" element={<><VendorOrder user={user}></VendorOrder></>}></Route>
         <Route path="/orders/userorders" element={<><UserDashboard user={user}></UserDashboard></>}></Route>
