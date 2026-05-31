@@ -48,14 +48,10 @@ app.use((req,res,next)=>{
     next();
 })
 app.use(cors({
-    origin:"https://street-vendor-nl05.onrender.com",
+    origin:"https://street-vendor-1-02x5.onrender.com",
     credentials:true
 }));
 
-app.use(express.static(path.join(__dirname,"dist")));
-app.get("/*splat",(req,res)=>{
-    res.sendFile(path.join(__dirname,"dist","index.html"));
-});
 
 app.use("/",heroCrouselRoute);
 app.use("/products",productRoute);

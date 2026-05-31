@@ -5,13 +5,13 @@ dotenv.config();
 let io;
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://street-vendor-frontend.onrender.com",
+    "https://street-vendor-1-02x5.onrender.com",
     "https://street-vendor-nl05.onrender.com",
 ];
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: process.env.VITE_SERVER_URL, // Allow requests from the frontend URL
+            origin: "https://street-vendor-1-02x5.onrender.com", // Allow requests from the frontend URL
             methods: ["GET", "POST"],
             credentials: true,
         },
