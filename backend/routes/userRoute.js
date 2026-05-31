@@ -38,7 +38,7 @@ router
     );
     res.cookie("token",token,{
         httpOnly:true,
-        secure:false,
+        secure:true,
         sameSite:"none",
         maxAge:480 * 60 * 60 * 1000, // 48 hours
     })
@@ -53,7 +53,7 @@ router
     res.clearCookie("token",{
         httpOnly:true,
         sameSite:"none",
-        secure:false
+        secure:true
     });
     res.json({message:"Logged out Successfully"});
 })
