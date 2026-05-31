@@ -67,13 +67,21 @@ export default function addproduct(){
                 return;
             }
             if(useLiveLocation && (!formData.lat || !formData.lng)){
-                toast.error("Unable to get live location. Please allow location access or enter address.");
+                toast.error("Unable to get live location. Please allow locati  on access or enter address.");
                 return;
             }
             try{
-                formData.append("useLiveLocation", JSON.stringify(useLiveLocation));
+                const data=new FormData();
+                Object.keys(formData).forEach((key)=>{
+                    data.append(key, formData[key]);
+                });
+                if(useLiveLocation){
+                    data.append("useLiveLocation", typeof useLiveLocation ==="object" ?
+                        JSON.stringify(useLiveLocation) : useLiveLocation.toString()
+                    );
+                }
                 if(isEdit){
-                    await axios.put(`/products/${id}`,formData,{
+                    await axios.put(`/products/${id}`,data,{
                         headers:{
                             "Content-Type":"multipart/form-data"
                         }
@@ -81,7 +89,7 @@ export default function addproduct(){
                     toast.success("Product updated successfully!");
                     console.log("updated");
                 }else{
-                    await axios.post("/products/addproduct",formData , {
+                    await axios.post("/products/addproduct",data , {
                         headers:{
                             "Content-Type":"multipart/form-data"
                         }
