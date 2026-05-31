@@ -77,11 +77,11 @@
         width:100%;
     }
 
-    .custom-mobile-menu.show{
+    /* .custom-mobile-menu.show{
         opacity:0;
-    }
+    } */
     .custom-mobile-menu.show{
-        opacity:1;
+        opacity:1 !important;
     }
     .custom-mobile-menu .links{
         color:#000 !important;

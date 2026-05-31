@@ -46,7 +46,7 @@ export default function UserDashboard({user}){
         <>
         <Container className="mt-4">
             <Row className="justify-content-center">
-                <Col mb={8}>
+                <Col lg={6} sm={12} mb={8}>
                     <h2 className="text-center mb-4" style={{color:"#182b4f"}}>My Orders</h2>
                    {orders.length===0 ? (
                     <p className="text-center">No orders found</p>
