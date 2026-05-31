@@ -57,7 +57,7 @@ export default function show({refreshCart,user}){
             <Row className="justify-content-center"><Col md={6} lg={7}>
                 <Card style={{width:"100%", height:"55vh" }} className="card">
                     <Row className="justify-content-center">
-                        <Card.Img className="cardimg" variant="top" src={product.image} style={{width:"83%",height:"17rem"}}/>
+                        <Card.Img className="cardimg" variant="top" src={product.image.url} style={{width:"83%",height:"17rem"}}/>
                     </Row>
       <Card.Body>
         <Card.Title className="mt-2">{product.name}</Card.Title>
