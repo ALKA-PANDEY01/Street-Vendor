@@ -75,9 +75,6 @@ export default function addproduct(){
                 const data=new FormData();
                 Object.keys(formData).forEach((key)=>{
                     data.append(key, formData[key]);
-                    if(image && key==="image"){
-                        data.append("image", formData.image);
-                    }
                 });
                 if(useLiveLocation){
                     data.append("useLiveLocation", typeof useLiveLocation ==="object" ?

@@ -49,8 +49,9 @@ app.use((req,res,next)=>{
 })
 app.use(cors({
     origin:"https://street-vendor-1-02x5.onrender.com",
-    credentials:true
+    credentials:true,
 }));
+
 
 
 
