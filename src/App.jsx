@@ -27,9 +27,7 @@ function App() {
   const getUser=async()=>{
     try{
       const res=await axios.get("/user/profile",{
-        headers:{
-          Authorization:`Bearer ${document.cookie.split("; ").find(row=>row.startsWith("token="))?.split("=")[1]}`
-        }
+        withCredentials:true
       });
       setUser(res.data);
       console.log("User synced in App",res.data);
