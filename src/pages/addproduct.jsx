@@ -71,6 +71,7 @@ export default function addproduct(){
                 return;
             }
             try{
+                formData.append("useLiveLocation", JSON.stringify(useLiveLocation));
                 if(isEdit){
                     await axios.put(`/products/${id}`,formData,{
                         headers:{
@@ -80,7 +81,7 @@ export default function addproduct(){
                     toast.success("Product updated successfully!");
                     console.log("updated");
                 }else{
-                    await axios.post("/products/addproduct", { ...formData, useLiveLocation }, {
+                    await axios.post("/products/addproduct",formData , {
                         headers:{
                             "Content-Type":"multipart/form-data"
                         }
