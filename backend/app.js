@@ -16,6 +16,11 @@ dotenv.config();
 const app=express();
 const port=5000;
 
+import path from "path";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const server=http.createServer(app);
 initSocket(server); // Initialize Socket.io with the Express server
 
@@ -48,7 +53,7 @@ app.use(cors({
 }));
 
 app.use(express.static(path.join(__dirname,"dist")));
-app.get("*",(req,res)=>{
+app.get("/*splat",(req,res)=>{
     res.sendFile(path.join(__dirname,"dist","index.html"));
 });
 
