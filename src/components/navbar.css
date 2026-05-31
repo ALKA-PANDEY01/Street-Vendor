@@ -56,7 +56,7 @@
         height:100vh;
         /* height:calc(100vh - 56px); */
 
-        background-color: rgdba(255,255,255,0.7) !important;
+        background-color: rgba(255,255,255,0.7) !important;
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
 
@@ -77,9 +77,9 @@
         width:100%;
     }
 
-    /* .custom-mobile-menu.show{
+    .custom-mobile-menu.show{
         opacity:0;
-    } */
+    }
     .custom-mobile-menu.show{
         opacity:1 !important;
     }
