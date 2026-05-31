@@ -26,7 +26,11 @@ function App() {
   // console.log("user info from app.jsx",user);
   const getUser=async()=>{
     try{
-      const res=await axios.get("/user/profile");
+      const res=await axios.get("/user/profile",{
+        headers:{
+          Authorization:`Bearer ${document.cookie.split("; ").find(row=>row.startsWith("token="))?.split("=")[1]}`
+        }
+      });
       setUser(res.data);
       console.log("User synced in App",res.data);
       return res.data;

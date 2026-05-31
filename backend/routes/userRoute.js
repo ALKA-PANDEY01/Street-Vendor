@@ -39,7 +39,8 @@ router
     res.cookie("token",token,{
         httpOnly:true,
         secure:false,
-        sameSite:"lax",
+        sameSite:"none",
+        maxAge:480 * 60 * 60 * 1000, // 48 hours
     })
     res.json({message:"Login successfully1"});
 }catch(err){
@@ -51,7 +52,7 @@ router
 .post("/logout",async(req,res)=>{
     res.clearCookie("token",{
         httpOnly:true,
-        sameSite:"lax",
+        sameSite:"none",
         secure:false
     });
     res.json({message:"Logged out Successfully"});
