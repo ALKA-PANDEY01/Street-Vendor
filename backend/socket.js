@@ -1,10 +1,15 @@
 import { Server } from "socket.io";
 
 let io;
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://street-vendor-frontend.onrender.com",
+    "https://street-vendor-nl05.onrender.com",
+];
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: "http://localhost:5173",
+            origin: allowedOrigins,
             methods: ["GET", "POST"],
             credentials: true,
         },

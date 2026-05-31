@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 import {Container,Row,Col,Button} from 'react-bootstrap';
 
 
-const socket=io("http://localhost:5000",{
+const socket=io(import.meta.env.VITE_SERVER_URL,{
     withCredentials:true,
 });
 
