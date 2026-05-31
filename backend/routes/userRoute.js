@@ -2,7 +2,7 @@ import User from '../models/user.js';
 import express from 'express';
 const router=express.Router();
 import jwt from "jsonwebtoken";
-import {authMiddleware} from "../middleware/authMiddleware.js"
+import {authMiddleware} from "../middleware/authmiddleware.js"
 
 router.
 post ("/signup",async(req, res)=>{

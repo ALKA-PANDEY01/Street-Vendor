@@ -1,7 +1,7 @@
 import express from 'express';
 const router=express.Router();
 import Product from '../models/products.js';
-import {authMiddleware, authorizeRoles} from "../middleware/authMiddleware.js"
+import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js"
 import Cart from "../models/cart.js";
 
 router.post("/add", authMiddleware, authorizeRoles("user","admin"), async(req,res)=>{

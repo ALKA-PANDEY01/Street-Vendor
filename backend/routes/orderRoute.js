@@ -1,7 +1,7 @@
 import  Cart from "../models/cart.js";
 import Product from "../models/products.js";
 import Order from "../models/order.js";
-import {authMiddleware, authorizeRoles} from "../middleware/authMiddleware.js";
+import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js";
 import express from "express";
 const router=express.Router();
 import {getIO} from "../socket.js";
