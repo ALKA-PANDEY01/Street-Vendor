@@ -53,11 +53,13 @@ app.use(cors({
 }));
 
 
-app.use("/",heroCrouselRoute);
+
 app.use("/products",productRoute);
 app.use("/user",userRoute);
 app.use("/cart",cartRoute);
 app.use("/orders",orderRoute);
+
+app.use("/",heroCrouselRoute);
 
 
 app.listen(port,()=>{
