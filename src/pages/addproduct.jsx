@@ -58,6 +58,7 @@ export default function addproduct(){
         const handleSubmit=async(e)=>{
             e.preventDefault();
             console.log("sending data: ",formData);
+            
             if(!formData.name || !formData.image || !formData.price || !formData.description || !formData.vendorName || !formData.category || !formData.quantity){
                 toast.error("Please fill in all required fields before submitting.");
                 return;
@@ -74,6 +75,9 @@ export default function addproduct(){
                 const data=new FormData();
                 Object.keys(formData).forEach((key)=>{
                     data.append(key, formData[key]);
+                    if(image && key==="image"){
+                        data.append("image", formData.image);
+                    }
                 });
                 if(useLiveLocation){
                     data.append("useLiveLocation", typeof useLiveLocation ==="object" ?
