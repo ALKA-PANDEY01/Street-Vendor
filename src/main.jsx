@@ -4,6 +4,8 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx'
 import axios from"axios";
+import dotenv from "dotenv";
+
 
 axios.defaults.baseURL=import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 axios.defaults.withCredentials=true;
