@@ -2,6 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import './productcard.css';
 import {Link} from 'react-router-dom';
+import AdjustIcon from '@mui/icons-material/Adjust';
 
 
 export default function productCard({product}) {
