@@ -2,6 +2,7 @@ import {useState,useEffect} from "react";
 import {useNavigate} from 'react-router-dom';
 import {useParams, Link} from "react-router-dom";
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import {Card,Button,Container,Row,Col} from 'react-bootstrap';
 import './show.css';
 import { toast } from 'react-toastify';
@@ -29,6 +30,26 @@ export default function show({refreshCart,user}){
             setLoading(false);
         })
     },[id]);
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_BACKEND_URL, {
+            withCredentials: true,
+        });
+
+        const handleStockUpdate = (updatedProduct) => {
+            if (updatedProduct._id === id) {
+                setProduct(updatedProduct);
+                toast.info(`Product stock updated: ${updatedProduct.inStock ? 'In stock' : 'Out of stock'}`);
+            }
+        };
+
+        socket.on("productStockUpdate", handleStockUpdate);
+
+        return () => {
+            socket.off("productStockUpdate", handleStockUpdate);
+            socket.disconnect();
+        };
+    }, [id]);
     // const handleDelete=async(id)=>{
     //     console.log(product);
     //     console.log("type of id being passed :", typeof id);

@@ -25,7 +25,8 @@ export default function cart({item, refreshCart}){
         toast.success(`${item.productId.name}: ${res.data.message}`);
         refreshCart();
       }catch(error){
-        toast.error("Failed to place order. Please try again.");
+        const message = error?.response?.data?.message || error?.message || "Failed to place order. Please try again.";
+        toast.error(message);
       }
       
     }
@@ -42,7 +43,9 @@ export default function cart({item, refreshCart}){
           <td>{item.quantity}</td>
           <td><AdjustIcon  sx={item.productId.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></td>
           <td>&#8377;{totalprice}</td>
-          <td><Button className="delbtn" onClick={()=>placeOrder(item.productId._id)} style={{backgroundColor:"#1896a4"}}>&#x2698;&#x273F;&#x2740;</Button></td>
+          <td><Button className="delbtn" onClick={()=>placeOrder(item.productId._id)} style={{backgroundColor:"#1896a4"}} disabled={!item.productId.inStock}>
+            {item.productId.inStock ? 'Order' : 'Out of stock'}
+          </Button></td>
         </tr>
         </>
         

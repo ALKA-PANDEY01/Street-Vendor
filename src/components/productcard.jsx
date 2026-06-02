@@ -13,7 +13,7 @@ export default function productCard({product}) {
         <Card.Title className="cardtitle doc">{product.name}</Card.Title>
            <Card.Text  className="productprice doc" >&#8377;{product.price}/{product.quantity}</Card.Text>
             <Card.Text  className="productvendor doc" >{product.vendorName}</Card.Text>
-            <Card.Text  className="productinstock doc" >{product.inStock}</Card.Text> 
+            <Card.Text  className="productinstock doc" ><AdjustIcon  sx={product.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></Card.Text> 
       </Card.Body>
     </Card>
     </Link>

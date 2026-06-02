@@ -7,6 +7,7 @@ import WavingHandIcon from '@mui/icons-material/WavingHand';
 import Fab from '@mui/material/Fab';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { io } from 'socket.io-client';
 
 export default function Product({user}){
     const[products,setProduct]=useState([]);
@@ -56,6 +57,22 @@ export default function Product({user}){
             getAllproducts();
         }
     },[selectedcategory, nearbyMode]);
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_BACKEND_URL, {
+            withCredentials: true,
+        });
+
+        socket.on("productStockUpdate", (updatedProduct) => {
+            setProduct((prevProducts) => prevProducts.map((item) =>
+                item._id === updatedProduct._id ? updatedProduct : item
+            ));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
 
     return (

@@ -5,6 +5,7 @@ import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js"
 import User from '../models/user.js';
 import axios from "axios";
 import upload from "../middleware/upload.js";
+import { getIO } from "../socket.js";
 
 router
 .get("/",async (req , res)=>{
@@ -208,6 +209,8 @@ router.put("/toggle-stock/:id", authMiddleware, authorizeRoles("vendor","admin")
         }
         product.inStock=!product.inStock;
         await product.save();
+        const io = getIO();
+        io?.emit("productStockUpdate", product);
         res.json(product);
     }catch(err){
         res.status(500).json({message:err.message});
@@ -226,6 +229,8 @@ router.put("/:id" , authMiddleware,upload.single("image"), authorizeRoles("vendo
         }
         Object.assign(product, req.body);
         await product.save();
+        const io = getIO();
+        io?.emit("productStockUpdate", product);
         res.status(200).json({message:"Product updated successfully", product});      
     }catch(error){
         res.status(500).json({error:error.message});
