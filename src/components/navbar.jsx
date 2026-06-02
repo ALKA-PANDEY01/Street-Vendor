@@ -55,7 +55,9 @@ const navigate= useNavigate();
                {user.role==="user" && (
                 <Nav.Link className="links" as={Link} to="/orders/userorders" onClick={closeMenu}>My Orders</Nav.Link>
                )}
+               {user.role==="user" && (
                 <Nav.Link className="links" as={Link} to="/cart" onClick={closeMenu}><ShoppingCartIcon></ShoppingCartIcon>({cartCount})</Nav.Link>
+               )}
               </> 
               ):(
               <>
