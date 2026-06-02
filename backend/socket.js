@@ -11,7 +11,7 @@ const allowedOrigins = [
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: "https://street-vendor-1-02x5.onrender.com", // Allow requests from the frontend URL
+            origin: allowedOrigins, // Allow requests from all whitelisted frontend URLs
             methods: ["GET", "POST"],
             credentials: true,
         },

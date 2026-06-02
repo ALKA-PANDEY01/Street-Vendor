@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 import {Container,Row,Col,Button} from 'react-bootstrap';
 
 
-const socket=io(import.meta.env.VITE_SERVER_URL,{
+const socket=io(import.meta.env.VITE_BACKEND_URL,{
     withCredentials:true,
 });
 
@@ -26,19 +26,26 @@ export default function UserDashboard({user}){
         if(!userId) {
             console.log("User ID not available, cannot fetch orders");
             return;
-        }else {
-        fetchOrders()
+        }
+        
+        fetchOrders();
+        
         // Join user room for real-time updates
-        socket.emit("joinUserRoom", userId); 
+        socket.emit("joinUserRoom", userId);
+        console.log("User joined room:", userId);
+        
         // Listen for order status updates
-        socket.on("orderStatusUpdate",(updatedOrder)=>{
+        const handleOrderStatusUpdate = (updatedOrder) => {
             console.log("Order status updated in user dashboard", updatedOrder);
             setOrders((prevOrders)=>prevOrders.map((order)=>order._id===updatedOrder._id ? updatedOrder : order));
-        })
-        return ()=>{
-            socket.off("orderStatusUpdate");
-        }
-        ;}},[user]);
+        };
+
+        socket.on("orderStatusUpdate", handleOrderStatusUpdate);
+
+        return () => {
+            socket.off("orderStatusUpdate", handleOrderStatusUpdate);
+        };
+    }, [user]);
         
         
         

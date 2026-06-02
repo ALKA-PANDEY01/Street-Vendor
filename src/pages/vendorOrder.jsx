@@ -8,7 +8,7 @@ import {Container,Row,Col,Button} from 'react-bootstrap';
 import './show.css'; 
 
 
-const socket=io(import.meta.env.VITE_SERVER_URL,{
+const socket=io(import.meta.env.VITE_BACKEND_URL,{
     withCredentials:true,
 });
 
@@ -28,17 +28,38 @@ export default function VendorOrder({user}){
             console.log("Vendor ID not available, cannot fetch orders");
             return;
         }
-        if(vendorId) {
+        
         fetchOrders();
+        
         // Join vendor room for real-time updates
         socket.emit("joinVendorRoom", vendorId);
+        console.log("Vendor joined room:", vendorId);
 
         // New order notification
-        socket.on("newOrder",(order)=>{
-            console.log("New order received in dashboard", order);
+        const handleNewOrder = (order) => {
+            console.log("New order received in vendor dashboard", order);
             toast.info("New order received!");
             setOrders((prevOrders)=>[order,...prevOrders]);
-        })}}, [user]);
+        };
+
+        // Order status update notification
+        const handleOrderStatusUpdate = (updatedOrder) => {
+            console.log("Order status updated in vendor dashboard", updatedOrder);
+            if(updatedOrder.status === "Delivered"){
+                setOrders((prevOrders)=>prevOrders.filter((order)=>order._id!==updatedOrder._id));
+                return;
+            }
+            setOrders((prevOrders)=>prevOrders.map((order)=>order._id===updatedOrder._id ? updatedOrder : order));
+        };
+
+        socket.on("newOrder", handleNewOrder);
+        socket.on("orderStatusUpdate", handleOrderStatusUpdate);
+
+        return () => {
+            socket.off("newOrder", handleNewOrder);
+            socket.off("orderStatusUpdate", handleOrderStatusUpdate);
+        };
+    }, [user]);
 
     const updateStatus=async(orderId,status)=>{
         try{
@@ -58,20 +79,6 @@ export default function VendorOrder({user}){
             toast.error("Failed to update order status");
         }
     }
-
-    useEffect(()=>{
-        socket.on("orderStatusUpdate",(updatedOrder)=>{
-            if(updatedOrder.status === "Delivered"){
-                setOrders((prevOrders)=>prevOrders.filter((order)=>order._id!==updatedOrder._id));
-                return;
-            }
-            setOrders((prevOrders)=>prevOrders.map((order)=>order._id===updatedOrder._id ? updatedOrder : order));
-        });
-
-        return ()=>{
-            socket.off("orderStatusUpdate");
-        };
-    }, []);
 
     return(
         <>

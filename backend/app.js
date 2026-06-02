@@ -62,7 +62,4 @@ app.use("/orders",orderRoute);
 
 app.use("/",heroCrouselRoute);
 
-
-app.listen(port,()=>{
-    console.log(`Server is listening at port :${port} `);
-})
+// DO NOT call app.listen() - server is already listening via http.createServer()
