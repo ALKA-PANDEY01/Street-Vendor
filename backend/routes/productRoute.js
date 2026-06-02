@@ -75,10 +75,14 @@ router.get("/mydashboard", authMiddleware, async(req,res)=>{
 
 router.post("/addproduct", authMiddleware, authorizeRoles("vendor","admin"),upload.single("image"), async(req,res)=>{
     try{
+        console.log("Add product request received");
+        console.log("File uploaded:", req.file ? "Yes" : "No");
+        
         if(!req.file){
             console.log("No file uploaded");
             return res.status(400).json({message:"Image file is required"});
         }
+        
         const {
             name,
             price,
@@ -93,37 +97,62 @@ router.post("/addproduct", authMiddleware, authorizeRoles("vendor","admin"),uplo
             useLiveLocation
         }=req.body;
 
+        // Validate required fields
+        if(!name || !price || !category || !description || !vendorName || !quantity){
+            console.log("Missing required fields");
+            return res.status(400).json({message:"Missing required fields: name, price, category, description, vendorName, quantity"});
+        }
+
         let url=req.file ? req.file.path : null;
         let filename=req.file ? req.file.filename : null;
+
+        console.log("Image URL from Cloudinary:", url);
+        console.log("Using live location:", useLiveLocation);
 
         let finalLat;
         let finalLng;
 
         if(useLiveLocation === "true" || useLiveLocation === true){
+            if(!lat || !lng){
+                console.log("Live location enabled but coordinates not provided");
+                return res.status(400).json({message:"Live location enabled but coordinates not available"});
+            }
             finalLat=lat;
             finalLng=lng;
         }
-
         else{
-            const geoRes=await axios.get(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(req.body.address)}&format=json&limit=1`,
-                {
-                    headers: {
-                        'User-Agent': 'StreetFoodApp/1.0 (contact@streetfood.local)'
+            if(!address){
+                console.log("Address not provided and live location disabled");
+                return res.status(400).json({message:"Address is required when live location is disabled"});
+            }
+            
+            try{
+                const geoRes=await axios.get(
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+                    {
+                        headers: {
+                            'User-Agent': 'StreetFoodApp/1.0 (contact@streetfood.local)'
+                        }
                     }
-                }
-            );
+                );
 
-            if(geoRes.data.length>0){
-                finalLat=geoRes.data[0].lat;
-                finalLng=geoRes.data[0].lon;
-            }else{
-                return res.status(400).json({message:"Invalid address. Could not geocode."});
+                if(geoRes.data.length>0){
+                    finalLat=geoRes.data[0].lat;
+                    finalLng=geoRes.data[0].lon;
+                    console.log("Geocoded address:", finalLat, finalLng);
+                }else{
+                    console.log("Invalid address for geocoding:", address);
+                    return res.status(400).json({message:"Invalid address. Could not geocode."});
+                }
+            }catch(geoError){
+                console.error("Geocoding error:", geoError.message);
+                return res.status(400).json({message:"Error geocoding address: "+geoError.message});
             }
         }
+
         const newProduct=new Product({
             name,
-            price,
+            price:Number(price),
             category,
             description,
             image: {
@@ -132,25 +161,27 @@ router.post("/addproduct", authMiddleware, authorizeRoles("vendor","admin"),uplo
             },
             vendorName,
             quantity,
-            inStock,
+            inStock: inStock === "true" || inStock === true,
             address,
             location: {
-
-        type: "Point",
-
-        coordinates: [
-          parseFloat(finalLng),
-          parseFloat(finalLat)
-        ]
-
-      }
-
+                type: "Point",
+                coordinates: [
+                    parseFloat(finalLng),
+                    parseFloat(finalLat)
+                ]
+            }
         });
+        
         newProduct.owner=req.user.userId || req.user._id;
+        
+        console.log("Saving product:", newProduct);
         await newProduct.save();
-        res.status(201).json(newProduct);
+        console.log("Product saved successfully");
+        
+        res.status(201).json({message:"Product added successfully", product: newProduct});
     }catch(err){
-        res.status(400).json({message:"validation error" ,error:err.message});
+        console.error("Error adding product:", err);
+        res.status(500).json({message:"Server error adding product", error:err.message});
     }
 })
 router.get("/addproduct", authMiddleware, authorizeRoles("vendor","admin"), async(req,res)=>{
@@ -219,6 +250,32 @@ router.delete("/:id", authMiddleware, authorizeRoles("vendor","admin"), async(re
 });
 
 
+// Multer/Upload error handling middleware
+router.use((err, req, res, next) => {
+    console.error("Router error middleware caught:", err.message);
+    
+    // Handle multer errors
+    if (err.name === 'MulterError') {
+        console.error("Multer error:", err.code);
+        if (err.code === 'FILE_TOO_LARGE') {
+            return res.status(400).json({message:"File is too large"});
+        }
+        if (err.code === 'LIMIT_FILE_COUNT') {
+            return res.status(400).json({message:"Too many files"});
+        }
+        return res.status(400).json({message:"File upload error: " + err.message});
+    }
+    
+    // Handle Cloudinary/other upload errors
+    if (err.message && err.message.includes('cloudinary')) {
+        console.error("Cloudinary error:", err.message);
+        return res.status(500).json({message:"Image upload service error. Please try again.", error: err.message});
+    }
+    
+    // Generic error
+    console.error("Unexpected error:", err);
+    res.status(500).json({message:"Server error", error: err.message});
+});
 
 // router
 // .get("/new", async(req,res)=>{
