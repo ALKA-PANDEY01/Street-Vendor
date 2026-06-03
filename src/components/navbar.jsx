@@ -37,7 +37,7 @@ const navigate= useNavigate();
       <Container fluid>
         <Navbar.Brand className="links"  href="#home">
             <BrunchDiningIcon  className="nav-icon" ></BrunchDiningIcon>
-           <span className="span-text">Street-Vendor</span> 
+           <span className="span-text">FarmKart</span> 
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="custom-mobile-menu">
