@@ -4,9 +4,9 @@ import "./navbar.css";
 import axios from 'axios';
 import {Link} from "react-router-dom";
 import{useNavigate} from "react-router-dom";
-import BrunchDiningIcon from '@mui/icons-material/BrunchDining';
 import { toast } from 'react-toastify';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { FaShoppingCart } from "react-icons/fa";
 
 
 export default function navbar({user,setUser,cartCount}){
@@ -36,7 +36,7 @@ const navigate= useNavigate();
         <Navbar expanded={expanded} onToggle={setExpanded} expand="lg" className="bg-body-tertiary navbarmain sticky-top" >
       <Container fluid>
         <Navbar.Brand className="links"  href="#home">
-            <BrunchDiningIcon  className="nav-icon" ></BrunchDiningIcon>
+            <FaShoppingCart className="cart-icon"></FaShoppingCart>
            <span className="span-text">FarmKart</span> 
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
