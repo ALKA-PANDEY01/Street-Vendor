@@ -29,6 +29,11 @@ export default function addToCartModal({product ,closeModal,refreshCart ,user}){
      if(!user){
       toast.error("You have not logged in yet!!");
       navigate("/user/login");
+      return;
+     }
+     if(user.role === "vendor"){
+      toast.info("You have to be a user for adding product to cart");
+      return;
      }
      else if(product.inStock===false){
       toast.error("Sorry!! Product is not in stock")

@@ -16,6 +16,21 @@ export default function show({refreshCart,user}){
     const[openModal,setOpenModal]=useState(false);
     const navigate=useNavigate();
 
+    const handleAddCartClick = () => {
+        if (!user) {
+            toast.info("You need to be a user to add products to cart");
+            navigate("/user/login");
+            return;
+        }
+
+        if (user.role === "vendor") {
+            toast.info("You have to be a user for adding product to cart");
+            return;
+        }
+
+        setOpenModal(true);
+    };
+
     useEffect(()=>{
         axios.get(`/products/${id}`)
         .then((res)=>{
@@ -87,7 +102,7 @@ export default function show({refreshCart,user}){
         <Card.Text className="doc">{product.category}</Card.Text>
         <Card.Text className="doc">inStock:<AdjustIcon  sx={product.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></Card.Text>
         <Card.Text className="doc">{product.vendorName}</Card.Text>
-        <Button onClick={()=> setOpenModal(true)}
+        <Button onClick={handleAddCartClick}
             className="cardbtn">Add to cart
         </Button>
         
