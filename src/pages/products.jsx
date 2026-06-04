@@ -86,7 +86,18 @@ export default function Product({user}){
                         )}
             {/* <Button onClick={()=>setNearbyMode(!nearbyMode)}>{nearbyMode ? "Show All Products" : "Show Nearby Products"}</Button> */}
             {/* <h2>{user ? `Hello, ${user.username} ` : "Welcome Guest"}</h2> */}
-             <Fab variant="extended" onClick={()=>setNearbyMode(!nearbyMode)} color={nearbyMode ? "secondary" : "primary"} sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+             <Fab
+               variant="extended"
+               onClick={()=>setNearbyMode(!nearbyMode)}
+               color={nearbyMode ? "secondary" : "primary"}
+               sx={{
+                 position: 'fixed',
+                 bottom: 16,
+                 right: { xs: '50%', sm: 16 },
+                 transform: { xs: 'translateX(50%)', sm: 'none' },
+                 zIndex: 1100,
+               }}
+             >
         <NavigationIcon sx={{ mr: 1 }} />
         {nearbyMode ? "Show All Products" : "Show Nearby Products"}
       </Fab>

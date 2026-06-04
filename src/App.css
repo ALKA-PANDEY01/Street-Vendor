@@ -17,4 +17,11 @@ body {
 
 .products-page-content {
     padding-top: 8rem;
+    padding-bottom: 7rem;
+}
+
+@media (max-width: 768px) {
+    .products-page-content {
+        padding-bottom: 9rem;
+    }
 }
