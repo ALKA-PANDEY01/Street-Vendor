@@ -59,7 +59,7 @@ export default function signup(){
                     </Form.Select>   
                 </Form.Group>
                         <Row className="justify-content-center">
-                            <Button varient="warning"  type="submit" style={{backgroundColor:"#f15f20", border:"none" , width:"25%"}} className="mb-5 submitbtn">Sign-Up</Button>
+                            <Button varient="warning"  type="submit" style={{width:"25%"}} className="mb-5 submitbtn">Sign-Up</Button>
                         </Row>
                         
                         </Form>

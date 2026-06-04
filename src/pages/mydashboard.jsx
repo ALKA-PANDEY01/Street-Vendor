@@ -143,7 +143,7 @@ export default function mydasboard({ user }){
             }}
           
           ></div></Button></td>
-          <td><Button onClick={()=>handleDelete(product._id)} className="delbtn" style={{backgroundColor:"#4F5D75"}}>Delete</Button></td>
+          <td><Button onClick={()=>handleDelete(product._id)} className="delbtn">Delete</Button></td>
           <td><Link to={`/products/${product._id}/edit`} style={{textDecoration:"none"}}><Button className="cardbtn">Edit</Button></Link></td>
         </tr>
     ))}

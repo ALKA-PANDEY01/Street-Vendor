@@ -46,7 +46,7 @@ export default function login({getUser}){
                             <Form.Control type="password" value={formData.password} name="password" onChange={handleChange} required></Form.Control>
                         </Form.Group>
                          <Row className="justify-content-center">
-                            <Button varient="warning"  type="submit" style={{backgroundColor:"#f15f20", border:"none" , width:"25%"}} className="mb-5 submitbtn">Login</Button>
+                            <Button varient="warning"  type="submit" style={{width:"25%"}} className="mb-5 submitbtn">Login</Button>
                         </Row>
                         </Form>
                         </Col>

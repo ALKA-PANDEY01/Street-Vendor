@@ -14,37 +14,40 @@
 }
 .cardbtn{
     margin:auto;
-    background-color: #cf501a;
+    background: linear-gradient(135deg, #4f72ff, #3a5de6);
     color:white;
-    box-shadow: 0 0 3px 3px #de4b0c;
-    border-style: none;
-     
-    
+    box-shadow: 0 14px 28px rgba(79, 114, 255, 0.18);
+    border:none;
+    padding: 0.75rem 1.2rem;
+    border-radius: 999px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 .doc{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color:rgb(45, 45, 77);
 }
 .cardbtn:hover{
-    margin:auto;
-    background-color: #cf501a;
-    color:white;
-    box-shadow: 0 0 3px 3px #de4b0c;
-    border-style: none;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #3a5de6, #2c4ed7);
+    box-shadow: 0 18px 34px rgba(79, 114, 255, 0.22);
 }
 .cardbtn:active{
-    margin:auto;
-    background-color: #cf501a !important;
+    background: linear-gradient(135deg, #3a5de6, #2c4ed7) !important;
     color:white !important;
-    box-shadow: 0 0 3px 3px #de4b0c !important;
-    border-style: none;
+    box-shadow: 0 16px 24px rgba(79, 114, 255, 0.22) !important;
 }
 .delbtn{
-    background-color: #4F5D75;
-    border-style: none;
+    background: linear-gradient(135deg, #f45b5b, #d6444f);
+    border:none;
+    color: #fff;
     margin:auto !important;
     margin-right:1rem !important;
-    /* margin-left:10rem !important; */
+    border-radius: 999px;
+    padding: 0.75rem 1.2rem;
+    box-shadow: 0 14px 28px rgba(244, 91, 91, 0.18);
+}
+.delbtn:hover{
+    background: linear-gradient(135deg, #d6444f, #c03842);
 }
 .modaloverlay{
     position:fixed;

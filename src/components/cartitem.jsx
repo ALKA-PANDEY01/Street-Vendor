@@ -39,11 +39,11 @@ export default function cart({item, refreshCart}){
           <td>{item.productId.name}</td>
           <td><Button className="cardbtn" onClick={increaseQuantity}>+1</Button></td>
           <td><Button className="cardbtn" onClick={decreaseQuantity}>-1</Button></td>
-          <td><Button className="delbtn" style={{backgroundColor:"#4F5D75"}} onClick={deleteItem}>Delete</Button></td>
+          <td><Button className="delbtn" onClick={deleteItem}>Delete</Button></td>
           <td>{item.quantity}</td>
           <td><AdjustIcon  sx={item.productId.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></td>
           <td>&#8377;{totalprice}</td>
-          <td><Button className="delbtn" onClick={()=>placeOrder(item.productId._id)} style={{backgroundColor:"#1896a4"}} disabled={!item.productId.inStock}>
+          <td><Button className="submitbtn" onClick={()=>placeOrder(item.productId._id)} disabled={!item.productId.inStock}>
             {item.productId.inStock ? 'Order' : 'Out of stock'}
           </Button></td>
         </tr>

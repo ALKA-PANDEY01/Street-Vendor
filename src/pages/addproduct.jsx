@@ -187,7 +187,7 @@ export default function addproduct(){
                     }} style={{color:"#f15f20"}}/>              
                     </Form.Group>
                 <Row className="justify-content-center">
-                    <Button varient="warning"  type="submit" style={{backgroundColor:"#f15f20", border:"none" , width:"30%"}} className="mb-5 submitbtn">{isEdit ? "Save changes" : "Add Product"}</Button>
+                    <Button varient="warning"  type="submit" style={{width:"30%"}} className="mb-5 submitbtn">{isEdit ? "Save changes" : "Add Product"}</Button>
                 </Row>
                 
                 </Form>

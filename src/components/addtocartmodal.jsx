@@ -77,8 +77,8 @@ export default function addToCartModal({product ,closeModal,refreshCart ,user}){
         </Modal.Body>
 
         <Modal.Footer>
-          <Button className="delbtn" style={{backgroundColor:"#4F5D75"}} onClick={closeModal}>cancel</Button>
-          <Button className="delbtn" style={{backgroundColor:"#4F5D75"}} disabled={loading} onClick={handleAddToCart}>{loading? "Adding..." : "Confirm"}</Button>
+          <Button className="delbtn" onClick={closeModal}>cancel</Button>
+          <Button className="submitbtn" disabled={loading} onClick={handleAddToCart}>{loading? "Adding..." : "Confirm"}</Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>

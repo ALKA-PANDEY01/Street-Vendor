@@ -112,14 +112,14 @@ export default function VendorOrder({user}){
                         <td>{order.status}</td>
                         <td>
                             {order.status==="Pending" && (
-                                <Button className="deldbtn" style={{ backgroundColor: '#57b8d3', borderColor: '#2b6362' }} onClick={()=>updateStatus(order._id,"Accepted")}>Accept</Button>
+                                <Button className="status-btn accept-btn" onClick={()=>updateStatus(order._id,"Accepted")}>Accept</Button>
                             )}
                         
                             {order.status==="Accepted" && (
-                                <Button  className="deldbtn" style={{ backgroundColor: '#ab3ddf', borderColor: '#451364' }} onClick={()=>updateStatus(order._id,"Preparing")}>Mark as Preparing</Button>
+                                <Button className="status-btn preparing-btn" onClick={()=>updateStatus(order._id,"Preparing")}>Mark as Preparing</Button>
                             )}  
                             {order.status==="Preparing" && (
-                                <Button className="delbtn" style={{ backgroundColor: '#7ae714', borderColor: '#1f761a' }} onClick={()=>updateStatus(order._id,"Delivered")}>Mark as Delivered</Button>
+                                <Button className="status-btn delivered-btn" onClick={()=>updateStatus(order._id,"Delivered")}>Mark as Delivered</Button>
                             )}
                             </td>
                             

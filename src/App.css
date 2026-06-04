@@ -33,10 +33,94 @@ body {
     margin-bottom: 1.75rem;
 }
 
+.btn,
+.cardbtn,
+.delbtn,
+.submitbtn,
+.status-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.2rem;
+    border-radius: 999px;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, #4f72ff, #3a5de6);
+    box-shadow: 0 14px 28px rgba(79, 114, 255, 0.18);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.btn:hover,
+.cardbtn:hover,
+.delbtn:hover,
+.submitbtn:hover,
+.status-btn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #3a5de6, #2c4ed7);
+    box-shadow: 0 18px 34px rgba(79, 114, 255, 0.22);
+}
+
+.delbtn {
+    background: linear-gradient(135deg, #f45b5b, #d6444f);
+}
+
+.delbtn:hover {
+    background: linear-gradient(135deg, #d6444f, #c03842);
+}
+
+.status-btn.accept-btn {
+    background: linear-gradient(135deg, #4f72ff, #3a5de6);
+}
+
+.status-btn.preparing-btn {
+    background: linear-gradient(135deg, #7c5bff, #5e3bcc);
+}
+
+.status-btn.delivered-btn {
+    background: linear-gradient(135deg, #37b67f, #2f8a6b);
+}
+
+.status-btn.accept-btn:hover,
+.status-btn.preparing-btn:hover,
+.status-btn.delivered-btn:hover {
+    transform: translateY(-1px);
+}
+
 .table-responsive {
     width: 100%;
     overflow-x: auto;
+    box-shadow: 0 18px 40px rgba(49, 80, 171, 0.08);
+    border-radius: 1rem;
 }
+
+.table {
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(79, 114, 255, 0.12);
+    border-radius: 1rem;
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: rgba(79, 114, 255, 0.08);
+    color: #17213d;
+    border-bottom: 1px solid rgba(79, 114, 255, 0.14);
+}
+
+.table tbody tr {
+    border-bottom: 1px solid rgba(79, 114, 255, 0.08);
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(79, 114, 255, 0.08);
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    padding: 0.95rem;
+}
+
 
 .table {
     background: rgba(255,255,255,0.95);
