@@ -80,7 +80,7 @@ export default function Product({user}){
                         <CategoryNavbar selectedCategory={selectedcategory} setSelectedCategory={setSelectedCategory}></CategoryNavbar>
                 <Container className="mt-4 products-page-content" style={{paddingTop:"2rem"}}>
                         {user && (
-                            <h2 className="text-center mt-3 " style={{color:"#182b4f", marginBottom:"2rem"}}>
+                            <h2 className="products-page-heading text-center mt-3">
                                 <WavingHandIcon /> Hello {user.name} !!
                             </h2>
                         )}
@@ -89,16 +89,20 @@ export default function Product({user}){
              <Fab
                variant="extended"
                onClick={()=>setNearbyMode(!nearbyMode)}
-               color={nearbyMode ? "secondary" : "primary"}
                sx={{
                  position: 'fixed',
                  bottom: 16,
                  right: { xs: '50%', sm: 16 },
                  transform: { xs: 'translateX(50%)', sm: 'none' },
+                 bgcolor: '#4f72ff',
+                 color: '#fff',
+                 px: 2.5,
+                 boxShadow: '0 16px 36px rgba(79, 114, 255, 0.28)',
+                 '&:hover': { bgcolor: '#3a5de6' },
                  zIndex: 1100,
                }}
              >
-        <NavigationIcon sx={{ mr: 1 }} />
+        <NavigationIcon sx={{ mr: 1, color: '#fff' }} />
         {nearbyMode ? "Show All Products" : "Show Nearby Products"}
       </Fab>
             <Row xs={1} md={2} lg={3} className="g-4">
