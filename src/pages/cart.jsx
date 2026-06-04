@@ -35,7 +35,7 @@ export default function Cart({cart,refreshCart}){
     <>
     <Container className="mt-5" >
             <Row className="justify-content-center"><Col md={9} lg={6} xs={12} >
-        <Table striped bordered hover>
+        <Table responsive striped bordered hover>
       <thead>
         <tr>
           <th>#</th>

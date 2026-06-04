@@ -79,7 +79,7 @@ export default function mydasboard({ user }){
     return(
         <Container className="mt-5" >
             <Row className="justify-content-center"><Col md={6} lg={8}>
-                <h2>My Dashboard</h2>
+                <h2 className="dashboard-heading">My Dashboard</h2>
                 <p>Total Products : {products.length}</p>
                 <Link to="/addProduct"><Button className="cardbtn" style={{margin:"1.5rem"}}>Add Product</Button></Link>
                 <Link to="/orders/myorders" onClick={()=>setUnseenorders([])}>

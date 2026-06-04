@@ -86,7 +86,7 @@ export default function VendorOrder({user}){
             <Row className="justify-content-center"><Col md={6} lg={8}>
                 <h2>My Orders</h2>
                 <p>Total Orders : {orders.length}</p>
-        <Table striped bordered hover>
+        <Table responsive striped bordered hover>
             <thead>
                 <tr>
                     <th>Product</th>
