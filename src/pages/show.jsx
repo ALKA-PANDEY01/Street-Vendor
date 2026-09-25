@@ -18,9 +18,8 @@ export default function Show({refreshCart,user}){
     const[loading,setLoading]=useState(true);
     const[openModal,setOpenModal]=useState(false);
     const[eligibleOrder,setEligibleOrder]=useState(null);
+    const[reviewedTargets,setReviewedTargets]=useState({product:false,vendor:false});
     const[reviewVersion,setReviewVersion]=useState(0);
-    const[productReviewOpen,setProductReviewOpen]=useState(false);
-    const[vendorReviewOpen,setVendorReviewOpen]=useState(false);
     const navigate=useNavigate();
 
     const handleAddCartClick = () => {
@@ -54,24 +53,46 @@ export default function Show({refreshCart,user}){
     },[id]);
 
     useEffect(()=>{
-        if(!user || !product){
+        if(!user || user.role !== "user" || !product){
             return;
         }
 
+        const vendorId=product.owner?._id || product.owner;
         let active=true;
         axios.get("/orders/userorders")
-            .then((res)=>{
+            .then(async(res)=>{
                 const deliveredOrder=res.data.find((order)=>{
                     const orderProductId=order.product?._id || order.product;
                     return order.status === "Delivered" && orderProductId?.toString() === product._id.toString();
                 });
+
+                if(!deliveredOrder){
+                    if(active){
+                        setEligibleOrder(null);
+                        setReviewedTargets({product:false,vendor:false});
+                    }
+                    return;
+                }
+
+                const targets=[
+                    axios.get(`/api/reviews/product/${product._id}/mine`,{params:{orderId:deliveredOrder._id}}),
+                ];
+                if(vendorId){
+                    targets.push(axios.get(`/api/reviews/vendor/${vendorId}/mine`,{params:{orderId:deliveredOrder._id}}));
+                }
+                const responses=await Promise.all(targets);
                 if(active){
-                    setEligibleOrder(deliveredOrder || null);
+                    setEligibleOrder(deliveredOrder);
+                    setReviewedTargets({
+                        product:Boolean(responses[0].data.review),
+                        vendor:Boolean(responses[1]?.data.review),
+                    });
                 }
             })
             .catch(()=>{
                 if(active){
                     setEligibleOrder(null);
+                    setReviewedTargets({product:false,vendor:false});
                 }
             });
 
@@ -120,27 +141,33 @@ export default function Show({refreshCart,user}){
     if(!product) return <div>No product existed</div>
 
     const vendorId=product.owner?._id || product.owner;
-    const handleReviewSuccess=()=>setReviewVersion((version)=>version+1);
-    const canReview=user?.role === "user" && Boolean(eligibleOrder);
+    const handleReviewSuccess=(targetType)=>{
+        setReviewedTargets((current)=>({...current,[targetType]:true}));
+        setReviewVersion((version)=>version+1);
+    };
 
-    const renderReviewAction=(isOpen,setIsOpen,targetType)=>{
+    const renderReviewForm=(targetType,targetId)=>{
         if(!user){
-            return <ReviewForm targetType={targetType} targetId={targetType === "product" ? product._id : vendorId} user={user}/>;
+            return <ReviewForm targetType={targetType} targetId={targetId} user={user}/>;
         }
         if(user.role !== "user"){
             return null;
         }
-        if(!canReview){
+        if(!eligibleOrder){
             return <p className="review-eligibility-message">You can review this after your delivered order.</p>;
         }
-        if(!isOpen){
-            return (
-                <Button className="review-open-button" onClick={()=>setIsOpen(true)}>
-                    Write a review
-                </Button>
-            );
+        if(reviewedTargets[targetType]){
+            return <p className="review-eligibility-message">You already reviewed this {targetType} for this order.</p>;
         }
-        return null;
+        return (
+            <ReviewForm
+                targetType={targetType}
+                targetId={targetId}
+                orderId={eligibleOrder._id}
+                user={user}
+                onSuccess={()=>handleReviewSuccess(targetType)}
+            />
+        );
     };
 
     return(
@@ -172,18 +199,6 @@ export default function Show({refreshCart,user}){
         
       </Card.Body>
     </Card>
-    <div className="detail-rating-panel">
-        <div>
-            <span className="detail-rating-label">Product rating</span>
-            <RatingSummary targetType="product" targetId={product._id} showEmpty />
-        </div>
-        {vendorId && (
-            <div>
-                <span className="detail-rating-label">Vendor rating</span>
-                <RatingSummary targetType="vendor" targetId={vendorId} showEmpty />
-            </div>
-        )}
-    </div>
     </Col>
             </Row></Container>
         <Container className="review-section">
@@ -191,16 +206,7 @@ export default function Show({refreshCart,user}){
                 <h2>Product reviews</h2>
                 <RatingSummary targetType="product" targetId={product._id} showEmpty />
             </div>
-            {renderReviewAction(productReviewOpen,setProductReviewOpen,"product")}
-            {productReviewOpen && (
-                <ReviewForm
-                    targetType="product"
-                    targetId={product._id}
-                    orderId={eligibleOrder?._id}
-                    user={user}
-                    onSuccess={handleReviewSuccess}
-                />
-            )}
+            {renderReviewForm("product",product._id)}
             <ReviewList
                 targetType="product"
                 targetId={product._id}
@@ -212,16 +218,7 @@ export default function Show({refreshCart,user}){
                         <h2>Vendor reviews</h2>
                         <RatingSummary targetType="vendor" targetId={vendorId} showEmpty />
                     </div>
-                    {renderReviewAction(vendorReviewOpen,setVendorReviewOpen,"vendor")}
-                    {vendorReviewOpen && (
-                        <ReviewForm
-                            targetType="vendor"
-                            targetId={vendorId}
-                            orderId={eligibleOrder?._id}
-                            user={user}
-                            onSuccess={handleReviewSuccess}
-                        />
-                    )}
+                    {renderReviewForm("vendor",vendorId)}
                     <ReviewList
                         targetType="vendor"
                         targetId={vendorId}

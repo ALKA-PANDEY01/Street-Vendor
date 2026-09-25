@@ -94,6 +94,32 @@ router.get("/:targetType/:targetId/summary",async(req,res)=>{
     }
 });
 
+router.get("/:targetType/:targetId/mine",authMiddleware,async(req,res)=>{
+    try{
+        const {targetType,targetId}=req.params;
+        if(!isValidTargetType(targetType) || !isValidObjectId(targetId)){
+            return res.status(400).json({message:"Invalid review target"});
+        }
+
+        const filter={
+            userId:req.user.userId,
+            targetType,
+            targetId,
+        };
+        if(req.query.orderId){
+            if(!isValidObjectId(req.query.orderId)){
+                return res.status(400).json({message:"Invalid order id"});
+            }
+            filter.orderId=req.query.orderId;
+        }
+
+        const review=await Review.findOne(filter);
+        res.json({review:review || null});
+    }catch(error){
+        res.status(500).json({message:error.message});
+    }
+});
+
 router.get("/:targetType/:targetId",async(req,res)=>{
     try{
         const {targetType,targetId}=req.params;
