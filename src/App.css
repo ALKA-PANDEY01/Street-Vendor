@@ -25,6 +25,7 @@ body {
 }
 
 .products-grid {
+    --bs-gutter-x: 2.5rem;
     row-gap: 2rem !important;
 }
 
