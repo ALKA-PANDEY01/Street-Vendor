@@ -48,6 +48,29 @@
     text-decoration: none;
 }
 
+.review-open-button {
+    margin-top: 1.5rem;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, #4f72ff, #3a5de6);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(79, 114, 255, 0.18);
+}
+
+.review-open-button:hover {
+    background: linear-gradient(135deg, #3a5de6, #2c4ed7);
+    color: #fff;
+}
+
+.review-eligibility-message {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    border-left: 3px solid #4f72ff;
+    background: rgba(245, 248, 255, 0.8);
+    color: #68728d;
+}
+
 .review-form,
 .review-list {
     margin-top: 1.5rem;

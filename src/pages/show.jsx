@@ -19,6 +19,8 @@ export default function Show({refreshCart,user}){
     const[openModal,setOpenModal]=useState(false);
     const[eligibleOrder,setEligibleOrder]=useState(null);
     const[reviewVersion,setReviewVersion]=useState(0);
+    const[productReviewOpen,setProductReviewOpen]=useState(false);
+    const[vendorReviewOpen,setVendorReviewOpen]=useState(false);
     const navigate=useNavigate();
 
     const handleAddCartClick = () => {
@@ -119,6 +121,27 @@ export default function Show({refreshCart,user}){
 
     const vendorId=product.owner?._id || product.owner;
     const handleReviewSuccess=()=>setReviewVersion((version)=>version+1);
+    const canReview=user?.role === "user" && Boolean(eligibleOrder);
+
+    const renderReviewAction=(isOpen,setIsOpen,targetType)=>{
+        if(!user){
+            return <ReviewForm targetType={targetType} targetId={targetType === "product" ? product._id : vendorId} user={user}/>;
+        }
+        if(user.role !== "user"){
+            return null;
+        }
+        if(!canReview){
+            return <p className="review-eligibility-message">You can review this after your delivered order.</p>;
+        }
+        if(!isOpen){
+            return (
+                <Button className="review-open-button" onClick={()=>setIsOpen(true)}>
+                    Write a review
+                </Button>
+            );
+        }
+        return null;
+    };
 
     return(
         <>
@@ -168,13 +191,16 @@ export default function Show({refreshCart,user}){
                 <h2>Product reviews</h2>
                 <RatingSummary targetType="product" targetId={product._id} />
             </div>
-            <ReviewForm
-                targetType="product"
-                targetId={product._id}
-                orderId={eligibleOrder?._id}
-                user={user}
-                onSuccess={handleReviewSuccess}
-            />
+            {renderReviewAction(productReviewOpen,setProductReviewOpen,"product")}
+            {productReviewOpen && (
+                <ReviewForm
+                    targetType="product"
+                    targetId={product._id}
+                    orderId={eligibleOrder?._id}
+                    user={user}
+                    onSuccess={handleReviewSuccess}
+                />
+            )}
             <ReviewList
                 targetType="product"
                 targetId={product._id}
@@ -186,13 +212,16 @@ export default function Show({refreshCart,user}){
                         <h2>Vendor reviews</h2>
                         <RatingSummary targetType="vendor" targetId={vendorId} />
                     </div>
-                    <ReviewForm
-                        targetType="vendor"
-                        targetId={vendorId}
-                        orderId={eligibleOrder?._id}
-                        user={user}
-                        onSuccess={handleReviewSuccess}
-                    />
+                    {renderReviewAction(vendorReviewOpen,setVendorReviewOpen,"vendor")}
+                    {vendorReviewOpen && (
+                        <ReviewForm
+                            targetType="vendor"
+                            targetId={vendorId}
+                            orderId={eligibleOrder?._id}
+                            user={user}
+                            onSuccess={handleReviewSuccess}
+                        />
+                    )}
                     <ReviewList
                         targetType="vendor"
                         targetId={vendorId}
