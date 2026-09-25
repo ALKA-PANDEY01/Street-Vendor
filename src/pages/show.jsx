@@ -8,12 +8,17 @@ import './show.css';
 import { toast } from 'react-toastify';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import AddToCartModal from "../components/addtocartmodal.jsx";
+import RatingSummary from "../components/ratingsummary.jsx";
+import ReviewForm from "../components/reviewform.jsx";
+import ReviewList from "../components/reviewlist.jsx";
 
-export default function show({refreshCart,user}){
+export default function Show({refreshCart,user}){
     const {id}=useParams();
     const [product, setProduct]=useState(null);
     const[loading,setLoading]=useState(true);
     const[openModal,setOpenModal]=useState(false);
+    const[eligibleOrder,setEligibleOrder]=useState(null);
+    const[reviewVersion,setReviewVersion]=useState(0);
     const navigate=useNavigate();
 
     const handleAddCartClick = () => {
@@ -45,6 +50,31 @@ export default function show({refreshCart,user}){
             setLoading(false);
         })
     },[id]);
+
+    useEffect(()=>{
+        if(!user || !product){
+            return;
+        }
+
+        let active=true;
+        axios.get("/orders/userorders")
+            .then((res)=>{
+                const deliveredOrder=res.data.find((order)=>{
+                    const orderProductId=order.product?._id || order.product;
+                    return order.status === "Delivered" && orderProductId?.toString() === product._id.toString();
+                });
+                if(active){
+                    setEligibleOrder(deliveredOrder || null);
+                }
+            })
+            .catch(()=>{
+                if(active){
+                    setEligibleOrder(null);
+                }
+            });
+
+        return ()=>{active=false;};
+    },[user,product]);
 
     useEffect(() => {
         const socket = io(import.meta.env.VITE_BACKEND_URL, {
@@ -87,6 +117,9 @@ export default function show({refreshCart,user}){
     if (loading) return <div>Loading...</div>
     if(!product) return <div>No product existed</div>
 
+    const vendorId=product.owner?._id || product.owner;
+    const handleReviewSuccess=()=>setReviewVersion((version)=>version+1);
+
     return(
         <>
         <Container  className="mt-4 container " >
@@ -102,6 +135,8 @@ export default function show({refreshCart,user}){
         <Card.Text className="doc">{product.category}</Card.Text>
         <Card.Text className="doc">inStock:<AdjustIcon  sx={product.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></Card.Text>
         <Card.Text className="doc">{product.vendorName}</Card.Text>
+        <RatingSummary targetType="product" targetId={product._id} />
+        {vendorId && <RatingSummary targetType="vendor" targetId={vendorId} />}
         <Button onClick={handleAddCartClick}
             className="cardbtn">Add to cart
         </Button>
@@ -118,7 +153,42 @@ export default function show({refreshCart,user}){
     </Card>
     </Col>
             </Row></Container>
-        
+        <Container className="review-section">
+            <div className="review-section-heading">
+                <h2>Product reviews</h2>
+                <RatingSummary targetType="product" targetId={product._id} />
+            </div>
+            <ReviewForm
+                targetType="product"
+                targetId={product._id}
+                orderId={eligibleOrder?._id}
+                onSuccess={handleReviewSuccess}
+            />
+            <ReviewList
+                targetType="product"
+                targetId={product._id}
+                refreshKey={reviewVersion}
+            />
+            {vendorId && (
+                <>
+                    <div className="review-section-heading vendor-review-heading">
+                        <h2>Vendor reviews</h2>
+                        <RatingSummary targetType="vendor" targetId={vendorId} />
+                    </div>
+                    <ReviewForm
+                        targetType="vendor"
+                        targetId={vendorId}
+                        orderId={eligibleOrder?._id}
+                        onSuccess={handleReviewSuccess}
+                    />
+                    <ReviewList
+                        targetType="vendor"
+                        targetId={vendorId}
+                        refreshKey={reviewVersion}
+                    />
+                </>
+            )}
+        </Container>
         </>
     )
 }

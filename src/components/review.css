@@ -1,0 +1,139 @@
+.review-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #556080;
+    font-size: 0.9rem;
+}
+
+.review-summary.compact {
+    font-size: 0.78rem;
+}
+
+.review-stars {
+    display: inline-flex;
+    align-items: center;
+    color: #f3a62f;
+    line-height: 1;
+}
+
+.review-star-icon {
+    font-size: 1.05rem !important;
+}
+
+.review-summary.compact .review-star-icon {
+    font-size: 0.95rem !important;
+}
+
+.review-count {
+    color: #68728d;
+}
+
+.review-form,
+.review-list {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(79, 114, 255, 0.14);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 40px rgba(49, 80, 171, 0.07);
+}
+
+.review-form-title,
+.review-list-title {
+    margin-bottom: 1rem;
+    color: #17213d;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.review-rating-input {
+    display: flex;
+    gap: 0.15rem;
+    margin-bottom: 1rem;
+}
+
+.review-star-button {
+    padding: 0.1rem;
+    border: 0;
+    background: transparent;
+    color: #d5d9e5;
+    cursor: pointer;
+}
+
+.review-star-button.active {
+    color: #f3a62f;
+}
+
+.review-star-button svg {
+    font-size: 2rem;
+}
+
+.review-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(79, 114, 255, 0.1);
+}
+
+.review-item:first-of-type {
+    padding-top: 0;
+}
+
+.review-item:last-of-type {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.review-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
+}
+
+.review-author {
+    color: #17213d;
+    font-weight: 700;
+}
+
+.review-date {
+    color: #7a839c;
+    font-size: 0.8rem;
+}
+
+.review-comment {
+    margin-top: 0.45rem;
+    color: #556080;
+}
+
+.review-empty,
+.review-loading {
+    color: #68728d;
+    text-align: center;
+}
+
+.review-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.review-page-label {
+    color: #556080;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 576px) {
+    .review-form,
+    .review-list {
+        padding: 1rem;
+    }
+
+    .review-item-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}

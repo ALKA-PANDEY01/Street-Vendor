@@ -8,6 +8,7 @@ import userRoute from './routes/userRoute.js';
 import cartRoute from './routes/cartRoute.js';
 import heroCrouselRoute from "./routes/herocrouselRoute.js";
 import orderRoute from "./routes/orderRoute.js";
+import reviewRoute from "./routes/reviewRoute.js";
 
 import {initSocket} from "./socket.js";
 import http from "http";
@@ -59,6 +60,7 @@ app.use("/products",productRoute);
 app.use("/user",userRoute);
 app.use("/cart",cartRoute);
 app.use("/orders",orderRoute);
+app.use("/api/reviews",reviewRoute);
 
 app.use("/",heroCrouselRoute);
 
