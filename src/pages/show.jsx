@@ -124,7 +124,7 @@ export default function Show({refreshCart,user}){
         <>
         <Container  className="mt-4 container " >
             <Row className="justify-content-center"><Col md={6} lg={7}>
-                <Card style={{width:"100%", height:"55vh" }} className="card">
+                <Card style={{width:"100%"}} className="card">
                     <Row className="justify-content-center">
                         <Card.Img className="cardimg" variant="top" src={product.image.url} style={{width:"83%",height:"17rem"}}/>
                     </Row>
@@ -135,8 +135,6 @@ export default function Show({refreshCart,user}){
         <Card.Text className="doc">{product.category}</Card.Text>
         <Card.Text className="doc">inStock:<AdjustIcon  sx={product.inStock?{color:"green"}: {color:"red"}}></AdjustIcon></Card.Text>
         <Card.Text className="doc">{product.vendorName}</Card.Text>
-        <RatingSummary targetType="product" targetId={product._id} />
-        {vendorId && <RatingSummary targetType="vendor" targetId={vendorId} />}
         <Button onClick={handleAddCartClick}
             className="cardbtn">Add to cart
         </Button>
@@ -151,6 +149,18 @@ export default function Show({refreshCart,user}){
         
       </Card.Body>
     </Card>
+    <div className="detail-rating-panel">
+        <div>
+            <span className="detail-rating-label">Product rating</span>
+            <RatingSummary targetType="product" targetId={product._id} />
+        </div>
+        {vendorId && (
+            <div>
+                <span className="detail-rating-label">Vendor rating</span>
+                <RatingSummary targetType="vendor" targetId={vendorId} />
+            </div>
+        )}
+    </div>
     </Col>
             </Row></Container>
         <Container className="review-section">

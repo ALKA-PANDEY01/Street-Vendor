@@ -12,6 +12,23 @@
 .card{
     border-style: none;
 }
+.detail-rating-panel{
+    display:flex;
+    justify-content:space-between;
+    gap:1.5rem;
+    margin-top:1.25rem;
+    padding:0.9rem 1rem;
+    border:1px solid rgba(79, 114, 255, 0.14);
+    border-radius:0.75rem;
+    background:rgba(245, 248, 255, 0.8);
+}
+.detail-rating-label{
+    display:block;
+    margin-bottom:0.25rem;
+    color:#556080;
+    font-size:0.8rem;
+    font-weight:600;
+}
 .cardbtn{
     margin:auto;
     background: linear-gradient(135deg, #4f72ff, #3a5de6);
@@ -89,6 +106,10 @@
 }
 
 @media (max-width: 576px) {
+    .detail-rating-panel{
+        flex-direction:column;
+        gap:0.75rem;
+    }
     .review-section-heading {
         align-items: flex-start;
         flex-direction: column;
