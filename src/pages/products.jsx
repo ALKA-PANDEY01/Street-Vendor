@@ -105,7 +105,7 @@ export default function Product({user}){
         <NavigationIcon sx={{ mr: 1, color: '#fff' }} />
         {nearbyMode ? "Show All Products" : "Show Nearby Products"}
       </Fab>
-            <Row xs={1} md={2} lg={3} className="g-4">
+            <Row xs={1} md={2} lg={3} className="g-4 products-grid">
                 
                 {products.map((item)=>(
                     <Col key={item._id}>

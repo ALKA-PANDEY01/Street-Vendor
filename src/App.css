@@ -24,6 +24,10 @@ body {
     margin: 0 auto;
 }
 
+.products-grid {
+    row-gap: 2rem !important;
+}
+
 .products-page-heading,
 .dashboard-heading {
     color: #17213d;
