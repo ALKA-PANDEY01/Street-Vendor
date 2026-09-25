@@ -78,7 +78,7 @@ export default function Product({user}){
     return (
         <>
                         <CategoryNavbar selectedCategory={selectedcategory} setSelectedCategory={setSelectedCategory}></CategoryNavbar>
-                <Container className="mt-6 products-page-content" style={{paddingTop:"2rem"}}>
+                <Container className="mt-6 products-page-content">
                         {user && (
                             <h2 className="products-page-heading text-center mt-3">
                                 <WavingHandIcon /> Hello {user.name} !!
