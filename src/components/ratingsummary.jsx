@@ -21,7 +21,7 @@ function RatingStars({value}){
     );
 }
 
-export default function RatingSummary({targetType,targetId,compact=false}){
+export default function RatingSummary({targetType,targetId,compact=false,showEmpty=false}){
     const [summary,setSummary]=useState(null);
 
     useEffect(()=>{
@@ -45,15 +45,17 @@ export default function RatingSummary({targetType,targetId,compact=false}){
         return ()=>{active=false;};
     },[targetType,targetId]);
 
-    if(!summary){
+    if(!summary && !showEmpty){
         return null;
     }
 
+    const displaySummary=summary || {averageRating:0,count:0};
+
     return (
         <div className={`review-summary ${compact ? "compact" : ""}`}>
-            <RatingStars value={Number(summary.averageRating) || 0}/>
-            <span>{Number(summary.averageRating || 0).toFixed(1)}</span>
-            <span className="review-count">({summary.count || 0})</span>
+            <RatingStars value={Number(displaySummary.averageRating) || 0}/>
+            <span>{Number(displaySummary.averageRating || 0).toFixed(1)}</span>
+            <span className="review-count">({displaySummary.count || 0})</span>
         </div>
     );
 }

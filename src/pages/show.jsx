@@ -175,12 +175,12 @@ export default function Show({refreshCart,user}){
     <div className="detail-rating-panel">
         <div>
             <span className="detail-rating-label">Product rating</span>
-            <RatingSummary targetType="product" targetId={product._id} />
+            <RatingSummary targetType="product" targetId={product._id} showEmpty />
         </div>
         {vendorId && (
             <div>
                 <span className="detail-rating-label">Vendor rating</span>
-                <RatingSummary targetType="vendor" targetId={vendorId} />
+                <RatingSummary targetType="vendor" targetId={vendorId} showEmpty />
             </div>
         )}
     </div>
@@ -189,7 +189,7 @@ export default function Show({refreshCart,user}){
         <Container className="review-section">
             <div className="review-section-heading">
                 <h2>Product reviews</h2>
-                <RatingSummary targetType="product" targetId={product._id} />
+                <RatingSummary targetType="product" targetId={product._id} showEmpty />
             </div>
             {renderReviewAction(productReviewOpen,setProductReviewOpen,"product")}
             {productReviewOpen && (
@@ -210,7 +210,7 @@ export default function Show({refreshCart,user}){
                 <>
                     <div className="review-section-heading vendor-review-heading">
                         <h2>Vendor reviews</h2>
-                        <RatingSummary targetType="vendor" targetId={vendorId} />
+                        <RatingSummary targetType="vendor" targetId={vendorId} showEmpty />
                     </div>
                     {renderReviewAction(vendorReviewOpen,setVendorReviewOpen,"vendor")}
                     {vendorReviewOpen && (
