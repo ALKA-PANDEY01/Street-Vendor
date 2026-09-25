@@ -4,12 +4,26 @@ import {Button, Form} from "react-bootstrap";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
 import "./review.css";
 
-export default function ReviewForm({targetType,targetId,orderId,onSuccess}){
+export default function ReviewForm({targetType,targetId,orderId,user,onSuccess}){
     const [rating,setRating]=useState(0);
     const [comment,setComment]=useState("");
     const [submitting,setSubmitting]=useState(false);
+
+    if(!user){
+        return (
+            <div className="review-login-prompt">
+                <span>Log in to share your experience.</span>
+                <Link to="/user/login">Log in</Link>
+            </div>
+        );
+    }
+
+    if(user.role !== "user"){
+        return null;
+    }
 
     if(!orderId || !targetId){
         return null;

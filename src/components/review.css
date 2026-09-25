@@ -29,6 +29,25 @@
     color: #68728d;
 }
 
+.review-login-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(79, 114, 255, 0.14);
+    border-radius: 0.75rem;
+    background: rgba(245, 248, 255, 0.8);
+    color: #556080;
+}
+
+.review-login-prompt a {
+    color: #3a5de6;
+    font-weight: 700;
+    text-decoration: none;
+}
+
 .review-form,
 .review-list {
     margin-top: 1.5rem;
@@ -135,5 +154,10 @@
         align-items: flex-start;
         flex-direction: column;
         gap: 0.25rem;
+    }
+
+    .review-login-prompt {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }

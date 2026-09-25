@@ -172,6 +172,7 @@ export default function Show({refreshCart,user}){
                 targetType="product"
                 targetId={product._id}
                 orderId={eligibleOrder?._id}
+                user={user}
                 onSuccess={handleReviewSuccess}
             />
             <ReviewList
@@ -189,6 +190,7 @@ export default function Show({refreshCart,user}){
                         targetType="vendor"
                         targetId={vendorId}
                         orderId={eligibleOrder?._id}
+                        user={user}
                         onSuccess={handleReviewSuccess}
                     />
                     <ReviewList

@@ -4,16 +4,14 @@ import Review from "../models/review.js";
 import Order from "../models/order.js";
 import Product from "../models/products.js";
 import User from "../models/user.js";
-import {authMiddleware} from "../middleware/authmiddleware.js";
+import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js";
 
 const router=express.Router();
-
-router.use(authMiddleware);
 
 const isValidObjectId=(id)=>mongoose.Types.ObjectId.isValid(id);
 const isValidTargetType=(targetType)=>["product","vendor"].includes(targetType);
 
-router.post("/",async(req,res)=>{
+router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
     try{
         const {targetType,targetId,orderId,rating,comment}=req.body;
 
@@ -127,7 +125,7 @@ router.get("/:targetType/:targetId",async(req,res)=>{
     }
 });
 
-router.put("/:id",async(req,res)=>{
+router.put("/:id",authMiddleware,authorizeRoles("user"),async(req,res)=>{
     try{
         const {rating,comment}=req.body;
         const review=await Review.findById(req.params.id);
@@ -156,7 +154,7 @@ router.put("/:id",async(req,res)=>{
     }
 });
 
-router.delete("/:id",async(req,res)=>{
+router.delete("/:id",authMiddleware,authorizeRoles("user"),async(req,res)=>{
     try{
         const review=await Review.findById(req.params.id);
         if(!review){
