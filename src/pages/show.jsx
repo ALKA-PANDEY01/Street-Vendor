@@ -17,7 +17,6 @@ export default function Show({refreshCart,user}){
     const [product, setProduct]=useState(null);
     const[loading,setLoading]=useState(true);
     const[openModal,setOpenModal]=useState(false);
-    const[eligibleOrder,setEligibleOrder]=useState(null);
     const[reviewedTargets,setReviewedTargets]=useState({product:false,vendor:false});
     const[reviewVersion,setReviewVersion]=useState(0);
     const navigate=useNavigate();
@@ -59,30 +58,15 @@ export default function Show({refreshCart,user}){
 
         const vendorId=product.owner?._id || product.owner;
         let active=true;
-        axios.get("/orders/userorders")
-            .then(async(res)=>{
-                const deliveredOrder=res.data.find((order)=>{
-                    const orderProductId=order.product?._id || order.product;
-                    return order.status === "Delivered" && orderProductId?.toString() === product._id.toString();
-                });
-
-                if(!deliveredOrder){
-                    if(active){
-                        setEligibleOrder(null);
-                        setReviewedTargets({product:false,vendor:false});
-                    }
-                    return;
-                }
-
-                const targets=[
-                    axios.get(`/api/reviews/product/${product._id}/mine`,{params:{orderId:deliveredOrder._id}}),
-                ];
-                if(vendorId){
-                    targets.push(axios.get(`/api/reviews/vendor/${vendorId}/mine`,{params:{orderId:deliveredOrder._id}}));
-                }
-                const responses=await Promise.all(targets);
+        const targets=[
+            axios.get(`/api/reviews/product/${product._id}/mine`),
+        ];
+        if(vendorId){
+            targets.push(axios.get(`/api/reviews/vendor/${vendorId}/mine`));
+        }
+        Promise.all(targets)
+            .then((responses)=>{
                 if(active){
-                    setEligibleOrder(deliveredOrder);
                     setReviewedTargets({
                         product:Boolean(responses[0].data.review),
                         vendor:Boolean(responses[1]?.data.review),
@@ -91,7 +75,6 @@ export default function Show({refreshCart,user}){
             })
             .catch(()=>{
                 if(active){
-                    setEligibleOrder(null);
                     setReviewedTargets({product:false,vendor:false});
                 }
             });
@@ -153,17 +136,13 @@ export default function Show({refreshCart,user}){
         if(user.role !== "user"){
             return null;
         }
-        if(!eligibleOrder){
-            return <p className="review-eligibility-message">You can review this after your delivered order.</p>;
-        }
         if(reviewedTargets[targetType]){
-            return <p className="review-eligibility-message">You already reviewed this {targetType} for this order.</p>;
+            return <p className="review-eligibility-message">You already reviewed this {targetType}.</p>;
         }
         return (
             <ReviewForm
                 targetType={targetType}
                 targetId={targetId}
-                orderId={eligibleOrder._id}
                 user={user}
                 onSuccess={()=>handleReviewSuccess(targetType)}
             />

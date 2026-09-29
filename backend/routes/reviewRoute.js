@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import Review from "../models/review.js";
-import Order from "../models/order.js";
 import Product from "../models/products.js";
 import User from "../models/user.js";
 import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js";
@@ -18,8 +17,11 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
         if(!isValidTargetType(targetType)){
             return res.status(400).json({message:"targetType must be product or vendor"});
         }
-        if(!isValidObjectId(targetId) || !isValidObjectId(orderId)){
-            return res.status(400).json({message:"Invalid target or order id"});
+        if(!isValidObjectId(targetId)){
+            return res.status(400).json({message:"Invalid target id"});
+        }
+        if(orderId && !isValidObjectId(orderId)){
+            return res.status(400).json({message:"Invalid order id"});
         }
 
         const numericRating=Number(rating);
@@ -34,25 +36,13 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
             return res.status(404).json({message:`${targetType} not found`});
         }
 
-        const orderFilter={
-            _id:orderId,
-            userId:req.user.userId,
-            status:"Delivered",
-            [targetType === "product" ? "product" : "vendor"]:targetId,
-        };
-        const order=await Order.findOne(orderFilter);
-        if(!order){
-            return res.status(403).json({message:"You can review only items from your delivered orders"});
-        }
-
         const existingReview=await Review.findOne({
             userId:req.user.userId,
             targetType,
             targetId,
-            orderId,
         });
         if(existingReview){
-            return res.status(409).json({message:"You have already reviewed this item for this order"});
+            return res.status(409).json({message:"You have already reviewed this item"});
         }
 
         const review=await Review.create({
@@ -67,7 +57,7 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
         res.status(201).json({message:"Review created successfully",review});
     }catch(error){
         if(error.code===11000){
-            return res.status(409).json({message:"You have already reviewed this item for this order"});
+            return res.status(409).json({message:"You have already reviewed this item"});
         }
         res.status(500).json({message:error.message});
     }

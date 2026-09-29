@@ -7,7 +7,7 @@ import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import "./review.css";
 
-export default function ReviewForm({targetType,targetId,orderId,user,onSuccess}){
+export default function ReviewForm({targetType,targetId,user,onSuccess}){
     const [rating,setRating]=useState(0);
     const [comment,setComment]=useState("");
     const [submitting,setSubmitting]=useState(false);
@@ -25,7 +25,7 @@ export default function ReviewForm({targetType,targetId,orderId,user,onSuccess})
         return null;
     }
 
-    if(!orderId || !targetId){
+    if(!targetId){
         return null;
     }
 
@@ -41,7 +41,6 @@ export default function ReviewForm({targetType,targetId,orderId,user,onSuccess})
             const res=await axios.post("/api/reviews",{
                 targetType,
                 targetId,
-                orderId,
                 rating,
                 comment:comment.trim(),
             });

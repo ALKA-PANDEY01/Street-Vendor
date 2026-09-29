@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import process from "node:process";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -65,7 +66,10 @@ app.use("/api/reviews",reviewRoute);
 app.use("/",heroCrouselRoute);
 
 // Error handling middleware for multer and other errors
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
+    if (res.headersSent) {
+        return _next(err);
+    }
     console.error("Global error handler:", err.message);
     console.error("Error stack:", err.stack);
     
