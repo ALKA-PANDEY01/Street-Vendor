@@ -1,62 +1,104 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {Container, Form, Button, Row, Col, Badge} from 'react-bootstrap';
+import {Container, Button, Row, Col, Badge} from 'react-bootstrap';
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
-import {io} from 'socket.io-client';
+import {toast} from 'react-toastify';
 import './show.css';
-import {useParams, Link} from "react-router-dom";
+import {Link} from "react-router-dom";
+import socket from "../api/trackingSocket.js";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-    withCredentials: true,
-});
+const getSeenOrderIds=(storageKey)=>{
+    try{
+        return new Set(JSON.parse(localStorage.getItem(storageKey) || "[]").map(String));
+    }catch{
+        return new Set();
+    }
+};
 
-socket.on("connect", () => {
-    console.log("Dashboard socket connected:", socket.id);
-});
-
-socket.on("disconnect", () => {
-    console.log("Dashboard socket disconnected");
-});
-
-export default function mydasboard({ user }){
+export default function MyDashboard({ user }){
     const [products,setProducts]=useState([]);
     const [unseenorders,setUnseenorders]=useState([]);
-    const navigate=useNavigate();
+    const [activeOrderIds,setActiveOrderIds]=useState([]);
 
-    const fetchProducts=async()=>{
-        try{
-            const res=await axios.get("/products/mydashboard");
-            setProducts(res.data);
-        }catch(err){
-            console.log("its dashboard.jsx errorr you know2",err);
-        }
-    }
     useEffect(()=>{
-        fetchProducts();
+        let active=true;
+        axios.get("/products/mydashboard")
+            .then((res)=>{
+                if(active){
+                    setProducts(res.data);
+                }
+            })
+            .catch((error)=>console.error("Unable to load dashboard products",error));
+        return ()=>{active=false;};
     },[]);
 
     useEffect(()=>{
-        if(!user?.userId) {
+        const vendorId=user?.userId;
+        if(!vendorId) {
             console.log("User not available in dashboard", user);
             return;
         }
 
-        console.log("Dashboard: Joining vendor room with ID:", user.userId);
-        socket.emit("joinVendorRoom", user.userId);
-        
-        socket.on("newOrder", (order)=>{
+        let active=true;
+        const storageKey=`farmkart:seen-orders:${vendorId}`;
+        const handleNewOrder=(order)=>{
             console.log("Dashboard: New order received", order);
-            setUnseenorders((prevOrders)=>[...prevOrders, order]);
-        });
+            toast.info("New order received!");
+            const orderId=String(order._id);
+            setActiveOrderIds((previous)=>Array.from(new Set([...previous,orderId])));
+            if(!getSeenOrderIds(storageKey).has(orderId)){
+                setUnseenorders((previous)=>previous.some((item)=>String(item._id) === orderId)
+                    ? previous
+                    : [...previous,order]);
+            }
+        };
+        socket.on("newOrder",handleNewOrder);
+        socket.emit("joinVendorRoom",vendorId);
+
+        axios.get("/orders/myorders")
+            .then((res)=>{
+                if(!active){
+                    return;
+                }
+                const openOrders=res.data.filter((order)=>order.status !== "Delivered");
+                const seenOrderIds=getSeenOrderIds(storageKey);
+                setActiveOrderIds((previous)=>Array.from(new Set([
+                    ...previous,
+                    ...openOrders.map((order)=>String(order._id)),
+                ])));
+                setUnseenorders((previous)=>{
+                    const unseenById=new Map(previous.map((order)=>[String(order._id),order]));
+                    openOrders
+                        .filter((order)=>!seenOrderIds.has(String(order._id)))
+                        .forEach((order)=>unseenById.set(String(order._id),order));
+                    return Array.from(unseenById.values());
+                });
+            })
+            .catch((error)=>console.error("Unable to load vendor order notifications",error));
 
         return ()=>{
-            socket.off("newOrder");
+            active=false;
+            socket.off("newOrder",handleNewOrder);
         };
     }, [user]);
+
+    const markOrdersSeen=()=>{
+        const vendorId=user?.userId;
+        if(vendorId){
+            const storageKey=`farmkart:seen-orders:${vendorId}`;
+            const seenOrderIds=getSeenOrderIds(storageKey);
+            activeOrderIds.forEach((orderId)=>seenOrderIds.add(String(orderId)));
+            try{
+                localStorage.setItem(storageKey,JSON.stringify(Array.from(seenOrderIds)));
+            }catch(error){
+                console.error("Unable to save viewed orders",error);
+            }
+        }
+        setUnseenorders([]);
+    };
     const handleDelete=async(id)=>{
         try{
-            const res=await axios.delete(`/products/${id}`);
+            await axios.delete(`/products/${id}`);
             setProducts(products.filter((p)=>p._id !==id));
         }catch(err){
             console.log("its dashboard.jsx errorr you know",err);
@@ -82,7 +124,7 @@ export default function mydasboard({ user }){
                 <h2 className="dashboard-heading">My Dashboard</h2>
                 <p>Total Products : {products.length}</p>
                 <Link to="/addProduct"><Button className="cardbtn" style={{margin:"1.5rem"}}>Add Product</Button></Link>
-                <Link to="/orders/myorders" onClick={()=>setUnseenorders([])}>
+                <Link to="/orders/myorders" onClick={markOrdersSeen}>
                     <Button className="cardbtn" style={{margin:"1.5rem", position:"relative"}}>
                         View Orders
                         {unseenorders.length > 0 && (
