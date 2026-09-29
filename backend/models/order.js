@@ -30,6 +30,20 @@ const orderSchema=new mongoose.Schema({
         enum:["Pending","Accepted","Rejected","Preparing","Delivered"],
 
 },
+    deliveryLocation:{
+        type:{
+            type:String,
+            enum:["Point"],
+            default:"Point",
+        },
+        coordinates:{
+            type:[Number],
+            default:undefined,
+        },
+    },
+    deliveryLocationUpdatedAt:{
+        type:Date,
+    },
 
 },
 {timestamps:true}

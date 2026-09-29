@@ -10,22 +10,30 @@ import { getIO } from "../socket.js";
 router
 .get("/",async (req , res)=>{
     try{
-        const {category,lat,lng}=req.query;
+        const {category,lat,lng,radiusKm}=req.query;
         let filter={};
         if(category){
             filter.category=category;
         }
-        if(lat && lng){
+        if(lat !== undefined || lng !== undefined){
+            const latitude=Number(lat);
+            const longitude=Number(lng);
+            const radius=Number(radiusKm || 10);
+            if(!Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
+                !Number.isFinite(longitude) || longitude < -180 || longitude > 180 ||
+                !Number.isFinite(radius) || radius <= 0 || radius > 50){
+                return res.status(400).json({message:"Invalid location or radius"});
+            }
             filter.location={
                 $near:{
                     $geometry:{
                         type:"Point",
                         coordinates:[
-                            parseFloat(lng),
-                            parseFloat(lat),
+                            longitude,
+                            latitude,
                         ]
                     },
-                    $maxDistance:50000,
+                    $maxDistance:radius*1000,
                 }
             }
         }
@@ -257,6 +265,9 @@ router.delete("/:id", authMiddleware, authorizeRoles("vendor","admin"), async(re
 
 // Multer/Upload error handling middleware
 router.use((err, req, res, next) => {
+    if(res.headersSent){
+        return next(err);
+    }
     console.error("Router error middleware caught:", err.message);
     
     // Handle multer errors

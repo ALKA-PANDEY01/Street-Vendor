@@ -1,35 +1,84 @@
 import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {io} from 'socket.io-client';
 import {toast} from 'react-toastify';
 import Table from 'react-bootstrap/Table';
 import {Container,Row,Col,Button} from 'react-bootstrap';  
 import './show.css'; 
+import socket from '../api/trackingSocket.js';
 
+function DeliveryLocationShare({orderId}){
+    const [sharing,setSharing]=useState(false);
 
-const socket=io(import.meta.env.VITE_BACKEND_URL,{
-    withCredentials:true,
-});
+    useEffect(()=>{
+        if(!sharing){
+            return;
+        }
+        const watchId=navigator.geolocation.watchPosition(
+            (position)=>{
+                socket.emit("deliveryLocationUpdate",{
+                    orderId,
+                    latitude:position.coords.latitude,
+                    longitude:position.coords.longitude,
+                },(response)=>{
+                    if(!response?.ok){
+                        setSharing(false);
+                        toast.error(response?.message || "Unable to share delivery location");
+                    }
+                });
+            },
+            (error)=>{
+                setSharing(false);
+                toast.error(error.message || "Unable to get delivery location");
+            },
+            {enableHighAccuracy:true,maximumAge:5000,timeout:15000}
+        );
+        return ()=>navigator.geolocation.clearWatch(watchId);
+    },[orderId,sharing]);
+
+    const toggleSharing=()=>{
+        if(!navigator.geolocation){
+            toast.error("Location is not available in this browser.");
+            return;
+        }
+        setSharing((current)=>!current);
+    };
+
+    return (
+        <Button
+            size="sm"
+            variant={sharing ? "outline-danger" : "outline-success"}
+            onClick={toggleSharing}
+        >
+            {sharing ? "Stop sharing" : "Share live location"}
+        </Button>
+    );
+}
 
 export default function VendorOrder({user}){
     const [orders,setOrders]=useState([]);
-    
-    
-    const fetchOrders=async()=>{
-       const res=await axios.get("/orders/myorders");
-        const visibleOrders = res.data.filter((order)=>order.status !== "Delivered");
-        setOrders(visibleOrders);
-        console.log("Vendor orders",visibleOrders);
-    };
+
     useEffect(()=>{
+        let active=true;
         const vendorId = user?.userId ? user.userId : null;
         if(!vendorId) {
             console.log("Vendor ID not available, cannot fetch orders");
-            return;
+            return ()=>{active=false;};
         }
-        
-        fetchOrders();
+
+        axios.get("/orders/myorders")
+            .then((res)=>{
+                if(active){
+                    const visibleOrders=res.data.filter((order)=>order.status !== "Delivered");
+                    setOrders(visibleOrders);
+                    console.log("Vendor orders",visibleOrders);
+                }
+            })
+            .catch((error)=>{
+                if(active){
+                    console.error("Vendor orders fetching error",error);
+                    toast.error("Unable to load orders");
+                }
+            });
         
         // Join vendor room for real-time updates
         socket.emit("joinVendorRoom", vendorId);
@@ -56,6 +105,7 @@ export default function VendorOrder({user}){
         socket.on("orderStatusUpdate", handleOrderStatusUpdate);
 
         return () => {
+            active=false;
             socket.off("newOrder", handleNewOrder);
             socket.off("orderStatusUpdate", handleOrderStatusUpdate);
         };
@@ -119,7 +169,10 @@ export default function VendorOrder({user}){
                                 <Button className="status-btn preparing-btn" onClick={()=>updateStatus(order._id,"Preparing")}>Mark as Preparing</Button>
                             )}  
                             {order.status==="Preparing" && (
-                                <Button className="status-btn delivered-btn" onClick={()=>updateStatus(order._id,"Delivered")}>Mark as Delivered</Button>
+                                <>
+                                    <DeliveryLocationShare orderId={order._id}/>
+                                    <Button className="status-btn delivered-btn" onClick={()=>updateStatus(order._id,"Delivered")}>Mark as Delivered</Button>
+                                </>
                             )}
                             </td>
                             

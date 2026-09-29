@@ -7,7 +7,9 @@ import axios from"axios";
 import dotenv from "dotenv";
 
 
-axios.defaults.baseURL=import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+axios.defaults.baseURL=import.meta.env.DEV
+  ? "/backend"
+  : (import.meta.env.VITE_BACKEND_URL || "http://localhost:5000");
 axios.defaults.withCredentials=true;
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -1,34 +1,28 @@
-import {useEffect, useState} from 'react';
-import {io} from 'socket.io-client';
+import {Fragment,useEffect, useState} from 'react';
 import axios from 'axios';
-import {toast} from 'react-toastify';
 import Table from 'react-bootstrap/Table';
 import {Container,Row,Col,Button} from 'react-bootstrap';
-
-
-const socket=io(import.meta.env.VITE_BACKEND_URL,{
-    withCredentials:true,
-});
+import DeliveryTrackingMap from '../components/deliverytrackingmap.jsx';
+import socket from '../api/trackingSocket.js';
 
 export default function UserDashboard({user}){
     const [orders,setOrders]=useState([]);
-    
-    const fetchOrders=async()=>{
-        try{
-            const res=await axios.get("/orders/userorders");
-            setOrders(res.data);
-        }catch(error){
-            console.log("user orders fetching error", error);
-        }};
 
     useEffect(()=>{
+        let active=true;
         const userId = user?.userId ? user.userId : null;   
         if(!userId) {
             console.log("User ID not available, cannot fetch orders");
-            return;
+            return ()=>{active=false;};
         }
-        
-        fetchOrders();
+
+        axios.get("/orders/userorders")
+            .then((res)=>{
+                if(active){
+                    setOrders(res.data);
+                }
+            })
+            .catch((error)=>console.error("User orders fetching error",error));
         
         // Join user room for real-time updates
         socket.emit("joinUserRoom", userId);
@@ -43,6 +37,7 @@ export default function UserDashboard({user}){
         socket.on("orderStatusUpdate", handleOrderStatusUpdate);
 
         return () => {
+            active=false;
             socket.off("orderStatusUpdate", handleOrderStatusUpdate);
         };
     }, [user]);
@@ -68,11 +63,24 @@ export default function UserDashboard({user}){
                         </thead>
                         <tbody>
                             {orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td>{order.product.name}</td>
-                                    <td>{order.vendor.username}</td>
-                                    <td>{order.status}</td>
-                                </tr>
+                                <Fragment key={order._id}>
+                                    <tr>
+                                        <td>{order.product?.name || "Product"}</td>
+                                        <td>{order.vendor?.username || "Vendor"}</td>
+                                        <td>{order.status}</td>
+                                    </tr>
+                                    {!['Delivered','Rejected'].includes(order.status) && (
+                                        <tr>
+                                            <td colSpan="3">
+                                                <DeliveryTrackingMap
+                                                    orderId={order._id}
+                                                    initialLocation={order.deliveryLocation}
+                                                    fallbackLocation={order.product?.location}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
+                                </Fragment>
                             ))}
                         </tbody>
                     </Table>
