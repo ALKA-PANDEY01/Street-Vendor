@@ -17,7 +17,7 @@ export default function Show({refreshCart,user}){
     const [product, setProduct]=useState(null);
     const[loading,setLoading]=useState(true);
     const[openModal,setOpenModal]=useState(false);
-    const[reviewedTargets,setReviewedTargets]=useState({product:false,vendor:false});
+    const[reviewAccess,setReviewAccess]=useState(null);
     const[reviewVersion,setReviewVersion]=useState(0);
     const navigate=useNavigate();
 
@@ -57,8 +57,10 @@ export default function Show({refreshCart,user}){
         }
 
         const vendorId=product.owner?._id || product.owner;
+        const key=`${user.userId}:${product._id}`;
         let active=true;
         const targets=[
+            axios.get("/orders/userorders"),
             axios.get(`/api/reviews/product/${product._id}/mine`),
         ];
         if(vendorId){
@@ -67,15 +69,25 @@ export default function Show({refreshCart,user}){
         Promise.all(targets)
             .then((responses)=>{
                 if(active){
-                    setReviewedTargets({
-                        product:Boolean(responses[0].data.review),
-                        vendor:Boolean(responses[1]?.data.review),
+                    const orders=Array.isArray(responses[0].data) ? responses[0].data : [];
+                    const deliveredOrders=orders.filter((order)=>order.status === "Delivered");
+                    setReviewAccess({
+                        key,
+                        eligibleTargets:{
+                            product:deliveredOrders.some((order)=>String(order.product?._id || order.product) === String(product._id)),
+                            vendor:deliveredOrders.some((order)=>String(order.vendor?._id || order.vendor) === String(vendorId)),
+                        },
+                        reviewedTargets:{
+                            product:Boolean(responses[1].data.review),
+                            vendor:Boolean(responses[2]?.data.review),
+                        },
                     });
                 }
             })
-            .catch(()=>{
+            .catch((error)=>{
+                console.error("Unable to check review eligibility",error);
                 if(active){
-                    setReviewedTargets({product:false,vendor:false});
+                    setReviewAccess({key,error:true});
                 }
             });
 
@@ -125,7 +137,10 @@ export default function Show({refreshCart,user}){
 
     const vendorId=product.owner?._id || product.owner;
     const handleReviewSuccess=(targetType)=>{
-        setReviewedTargets((current)=>({...current,[targetType]:true}));
+        setReviewAccess((current)=>current ? {
+            ...current,
+            reviewedTargets:{...current.reviewedTargets,[targetType]:true},
+        } : current);
         setReviewVersion((version)=>version+1);
     };
 
@@ -136,7 +151,18 @@ export default function Show({refreshCart,user}){
         if(user.role !== "user"){
             return null;
         }
-        if(reviewedTargets[targetType]){
+        const key=`${user.userId}:${product._id}`;
+        const access=reviewAccess?.key === key ? reviewAccess : null;
+        if(!access){
+            return <p className="review-eligibility-message">Checking review eligibility...</p>;
+        }
+        if(access.error){
+            return <p className="review-eligibility-message">Unable to check your order. Please refresh and try again.</p>;
+        }
+        if(!access.eligibleTargets?.[targetType]){
+            return <p className="review-eligibility-message">You can review this {targetType} after a delivered order.</p>;
+        }
+        if(access.reviewedTargets?.[targetType]){
             return <p className="review-eligibility-message">You already reviewed this {targetType}.</p>;
         }
         return (
@@ -183,7 +209,7 @@ export default function Show({refreshCart,user}){
         <Container className="review-section">
             <div className="review-section-heading">
                 <h2>Product reviews</h2>
-                <RatingSummary targetType="product" targetId={product._id} showEmpty />
+                <RatingSummary targetType="product" targetId={product._id} showEmpty refreshKey={reviewVersion} />
             </div>
             {renderReviewForm("product",product._id)}
             <ReviewList
@@ -195,7 +221,7 @@ export default function Show({refreshCart,user}){
                 <>
                     <div className="review-section-heading vendor-review-heading">
                         <h2>Vendor reviews</h2>
-                        <RatingSummary targetType="vendor" targetId={vendorId} showEmpty />
+                        <RatingSummary targetType="vendor" targetId={vendorId} showEmpty refreshKey={reviewVersion} />
                     </div>
                     {renderReviewForm("vendor",vendorId)}
                     <ReviewList

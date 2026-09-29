@@ -21,7 +21,7 @@ function RatingStars({value}){
     );
 }
 
-export default function RatingSummary({targetType,targetId,compact=false,showEmpty=false}){
+export default function RatingSummary({targetType,targetId,compact=false,showEmpty=false,refreshKey=0}){
     const [summary,setSummary]=useState(null);
 
     useEffect(()=>{
@@ -43,7 +43,7 @@ export default function RatingSummary({targetType,targetId,compact=false,showEmp
             });
 
         return ()=>{active=false;};
-    },[targetType,targetId]);
+    },[targetType,targetId,refreshKey]);
 
     if(!summary && !showEmpty){
         return null;

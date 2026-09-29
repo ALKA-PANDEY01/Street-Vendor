@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Review from "../models/review.js";
+import Order from "../models/order.js";
 import Product from "../models/products.js";
 import User from "../models/user.js";
 import {authMiddleware, authorizeRoles} from "../middleware/authmiddleware.js";
@@ -12,16 +13,18 @@ const isValidTargetType=(targetType)=>["product","vendor"].includes(targetType);
 
 router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
     try{
-        const {targetType,targetId,orderId,rating,comment}=req.body;
+        const {targetType,targetId,rating,comment}=req.body;
+        console.info("Review submission received",{
+            userId:req.user.userId,
+            targetType,
+            targetId,
+        });
 
         if(!isValidTargetType(targetType)){
             return res.status(400).json({message:"targetType must be product or vendor"});
         }
         if(!isValidObjectId(targetId)){
             return res.status(400).json({message:"Invalid target id"});
-        }
-        if(orderId && !isValidObjectId(orderId)){
-            return res.status(400).json({message:"Invalid order id"});
         }
 
         const numericRating=Number(rating);
@@ -34,6 +37,16 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
             : await User.findOne({_id:targetId,role:"vendor"});
         if(!target){
             return res.status(404).json({message:`${targetType} not found`});
+        }
+
+        const orderFilter={
+            userId:req.user.userId,
+            status:"Delivered",
+            [targetType === "product" ? "product" : "vendor"]:targetId,
+        };
+        const deliveredOrder=await Order.findOne(orderFilter).sort({createdAt:-1});
+        if(!deliveredOrder){
+            return res.status(403).json({message:"You can review only items from your delivered orders"});
         }
 
         const existingReview=await Review.findOne({
@@ -49,16 +62,22 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
             userId:req.user.userId,
             targetType,
             targetId,
-            orderId,
+            orderId:deliveredOrder._id,
             rating:numericRating,
             comment:comment || "",
         });
 
+        console.info("Review saved",{
+            reviewId:review._id.toString(),
+            targetType,
+            targetId,
+        });
         res.status(201).json({message:"Review created successfully",review});
     }catch(error){
         if(error.code===11000){
             return res.status(409).json({message:"You have already reviewed this item"});
         }
+        console.error("Review submission failed",error);
         res.status(500).json({message:error.message});
     }
 });
