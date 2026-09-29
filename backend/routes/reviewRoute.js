@@ -46,6 +46,11 @@ router.post("/",authMiddleware,authorizeRoles("user"),async(req,res)=>{
         };
         const deliveredOrder=await Order.findOne(orderFilter).sort({createdAt:-1});
         if(!deliveredOrder){
+            console.warn("Review rejected: no matching delivered order",{
+                userId:req.user.userId,
+                targetType,
+                targetId,
+            });
             return res.status(403).json({message:"You can review only items from your delivered orders"});
         }
 

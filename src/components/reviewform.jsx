@@ -49,7 +49,11 @@ export default function ReviewForm({targetType,targetId,user,onSuccess}){
             setComment("");
             onSuccess?.(res.data.review);
         }catch(error){
-            toast.error(error.response?.data?.message || "Unable to add review");
+            console.error("Review submission failed",error);
+            toast.error(
+                error.response?.data?.message ||
+                (error.request ? "Could not reach the review service. Please try again." : "Unable to add review")
+            );
         }finally{
             setSubmitting(false);
         }

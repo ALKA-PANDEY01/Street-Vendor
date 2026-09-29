@@ -56,38 +56,31 @@ export default function Show({refreshCart,user}){
             return;
         }
 
-        const vendorId=product.owner?._id || product.owner;
         const key=`${user.userId}:${product._id}`;
         let active=true;
         const targets=[
-            axios.get("/orders/userorders"),
             axios.get(`/api/reviews/product/${product._id}/mine`),
         ];
+        const vendorId=product.owner?._id || product.owner;
         if(vendorId){
             targets.push(axios.get(`/api/reviews/vendor/${vendorId}/mine`));
         }
         Promise.all(targets)
             .then((responses)=>{
                 if(active){
-                    const orders=Array.isArray(responses[0].data) ? responses[0].data : [];
-                    const deliveredOrders=orders.filter((order)=>order.status === "Delivered");
                     setReviewAccess({
                         key,
-                        eligibleTargets:{
-                            product:deliveredOrders.some((order)=>String(order.product?._id || order.product) === String(product._id)),
-                            vendor:deliveredOrders.some((order)=>String(order.vendor?._id || order.vendor) === String(vendorId)),
-                        },
                         reviewedTargets:{
-                            product:Boolean(responses[1].data.review),
-                            vendor:Boolean(responses[2]?.data.review),
+                            product:Boolean(responses[0].data.review),
+                            vendor:Boolean(responses[1]?.data.review),
                         },
                     });
                 }
             })
             .catch((error)=>{
-                console.error("Unable to check review eligibility",error);
+                console.error("Unable to check previous reviews",error);
                 if(active){
-                    setReviewAccess({key,error:true});
+                    setReviewAccess({key,reviewedTargets:{product:false,vendor:false}});
                 }
             });
 
@@ -154,13 +147,7 @@ export default function Show({refreshCart,user}){
         const key=`${user.userId}:${product._id}`;
         const access=reviewAccess?.key === key ? reviewAccess : null;
         if(!access){
-            return <p className="review-eligibility-message">Checking review eligibility...</p>;
-        }
-        if(access.error){
-            return <p className="review-eligibility-message">Unable to check your order. Please refresh and try again.</p>;
-        }
-        if(!access.eligibleTargets?.[targetType]){
-            return <p className="review-eligibility-message">You can review this {targetType} after a delivered order.</p>;
+            return <p className="review-eligibility-message">Checking your previous review...</p>;
         }
         if(access.reviewedTargets?.[targetType]){
             return <p className="review-eligibility-message">You already reviewed this {targetType}.</p>;
