@@ -1,5 +1,5 @@
 import {useState} from "react";
-import axios from "axios";
+import reviewApi from "../api/reviewApi.js";
 import {Button, Form} from "react-bootstrap";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -38,7 +38,7 @@ export default function ReviewForm({targetType,targetId,user,onSuccess}){
 
         setSubmitting(true);
         try{
-            const res=await axios.post("/api/reviews",{
+            const res=await reviewApi.post("/api/reviews",{
                 targetType,
                 targetId,
                 rating,

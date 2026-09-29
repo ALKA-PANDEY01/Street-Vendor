@@ -4,6 +4,7 @@ import {useParams, Link} from "react-router-dom";
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import {Card,Button,Container,Row,Col} from 'react-bootstrap';
+import reviewApi from "../api/reviewApi.js";
 import './show.css';
 import { toast } from 'react-toastify';
 import AdjustIcon from '@mui/icons-material/Adjust';
@@ -59,11 +60,11 @@ export default function Show({refreshCart,user}){
         const key=`${user.userId}:${product._id}`;
         let active=true;
         const targets=[
-            axios.get(`/api/reviews/product/${product._id}/mine`),
+            reviewApi.get(`/api/reviews/product/${product._id}/mine`),
         ];
         const vendorId=product.owner?._id || product.owner;
         if(vendorId){
-            targets.push(axios.get(`/api/reviews/vendor/${vendorId}/mine`));
+            targets.push(reviewApi.get(`/api/reviews/vendor/${vendorId}/mine`));
         }
         Promise.all(targets)
             .then((responses)=>{

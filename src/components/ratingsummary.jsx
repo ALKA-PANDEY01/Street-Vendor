@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
+import reviewApi from "../api/reviewApi.js";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
@@ -30,7 +30,7 @@ export default function RatingSummary({targetType,targetId,compact=false,showEmp
             return ()=>{active=false;};
         }
 
-        axios.get(`/api/reviews/${targetType}/${targetId}/summary`)
+        reviewApi.get(`/api/reviews/${targetType}/${targetId}/summary`)
             .then((res)=>{
                 if(active){
                     setSummary(res.data);

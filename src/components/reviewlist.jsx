@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
+import reviewApi from "../api/reviewApi.js";
 import {Button} from "react-bootstrap";
 import {RatingStars} from "./ratingsummary.jsx";
 import "./review.css";
@@ -16,7 +16,7 @@ export default function ReviewList({targetType,targetId,refreshKey=0}){
             return ()=>{active=false;};
         }
 
-        axios.get(`/api/reviews/${targetType}/${targetId}`,{
+        reviewApi.get(`/api/reviews/${targetType}/${targetId}`,{
             params:{page,limit:5},
         })
             .then((res)=>{
