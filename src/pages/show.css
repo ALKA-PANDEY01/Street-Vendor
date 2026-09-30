@@ -84,8 +84,8 @@
 }
 
 .review-section {
-    max-width: 900px;
-    padding-top: 2rem;
+    max-width: 960px;
+    padding-top: 2.5rem;
     padding-bottom: 8rem;
 }
 
@@ -93,16 +93,23 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 1.25rem;
+    margin: 0 0 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e8ef;
 }
 
 .review-section-heading h2 {
     margin: 0;
+    color: #202b3c;
+    font-size: 1.65rem;
+    font-weight: 700;
 }
 
-.vendor-review-heading {
-    margin-top: 3rem;
+.review-section-heading p {
+    margin: 0.35rem 0 0;
+    color: #68728d;
+    font-size: 0.92rem;
 }
 
 @media (max-width: 576px) {
@@ -113,6 +120,7 @@
     .review-section-heading {
         align-items: flex-start;
         flex-direction: column;
+        gap: 0.65rem;
     }
 }
 

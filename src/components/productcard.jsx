@@ -7,8 +7,6 @@ import RatingSummary from './ratingsummary.jsx';
 
 
 export default function productCard({product}) {
-  const vendorId=product.owner?._id || product.owner;
-
   return (
     <div className="product-card-wrap">
       <Link to={`/products/${product._id}`} style={{textDecoration:"none"}}>
@@ -23,7 +21,6 @@ export default function productCard({product}) {
       </Link>
       <div className="product-card-ratings">
         <RatingSummary targetType="product" targetId={product._id} compact />
-        {vendorId && <RatingSummary targetType="vendor" targetId={vendorId} compact />}
       </div>
     </div>
   );

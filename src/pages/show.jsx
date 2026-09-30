@@ -59,21 +59,13 @@ export default function Show({refreshCart,user}){
 
         const key=`${user.userId}:${product._id}`;
         let active=true;
-        const targets=[
-            reviewApi.get(`/api/reviews/product/${product._id}/mine`),
-        ];
-        const vendorId=product.owner?._id || product.owner;
-        if(vendorId){
-            targets.push(reviewApi.get(`/api/reviews/vendor/${vendorId}/mine`));
-        }
-        Promise.all(targets)
-            .then((responses)=>{
+        reviewApi.get(`/api/reviews/product/${product._id}/mine`)
+            .then((response)=>{
                 if(active){
                     setReviewAccess({
                         key,
                         reviewedTargets:{
-                            product:Boolean(responses[0].data.review),
-                            vendor:Boolean(responses[1]?.data.review),
+                            product:Boolean(response.data.review),
                         },
                     });
                 }
@@ -81,7 +73,7 @@ export default function Show({refreshCart,user}){
             .catch((error)=>{
                 console.error("Unable to check previous reviews",error);
                 if(active){
-                    setReviewAccess({key,reviewedTargets:{product:false,vendor:false}});
+                    setReviewAccess({key,reviewedTargets:{product:false}});
                 }
             });
 
@@ -129,7 +121,6 @@ export default function Show({refreshCart,user}){
     if (loading) return <div>Loading...</div>
     if(!product) return <div>No product existed</div>
 
-    const vendorId=product.owner?._id || product.owner;
     const handleReviewSuccess=(targetType)=>{
         setReviewAccess((current)=>current ? {
             ...current,
@@ -196,7 +187,10 @@ export default function Show({refreshCart,user}){
             </Row></Container>
         <Container className="review-section">
             <div className="review-section-heading">
-                <h2>Product reviews</h2>
+                <div>
+                    <h2>Customer reviews</h2>
+                    <p>Feedback shared after a delivered order.</p>
+                </div>
                 <RatingSummary targetType="product" targetId={product._id} showEmpty refreshKey={reviewVersion} />
             </div>
             {renderReviewForm("product",product._id)}
@@ -205,20 +199,6 @@ export default function Show({refreshCart,user}){
                 targetId={product._id}
                 refreshKey={reviewVersion}
             />
-            {vendorId && (
-                <>
-                    <div className="review-section-heading vendor-review-heading">
-                        <h2>Vendor reviews</h2>
-                        <RatingSummary targetType="vendor" targetId={vendorId} showEmpty refreshKey={reviewVersion} />
-                    </div>
-                    {renderReviewForm("vendor",vendorId)}
-                    <ReviewList
-                        targetType="vendor"
-                        targetId={vendorId}
-                        refreshKey={reviewVersion}
-                    />
-                </>
-            )}
         </Container>
         </>
     )

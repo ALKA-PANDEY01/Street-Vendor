@@ -1,9 +1,10 @@
 .review-summary {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    color: #556080;
+    gap: 0.4rem;
+    color: #344054;
     font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .review-summary.compact {
@@ -73,19 +74,19 @@
 
 .review-form,
 .review-list {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    border: 1px solid rgba(79, 114, 255, 0.14);
-    border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 18px 40px rgba(49, 80, 171, 0.07);
+    margin-top: 1rem;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid #e5e8ef;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(28, 39, 56, 0.045);
 }
 
 .review-form-title,
 .review-list-title {
     margin-bottom: 1rem;
-    color: #17213d;
-    font-size: 1.25rem;
+    color: #202b3c;
+    font-size: 1.15rem;
     font-weight: 700;
 }
 
@@ -99,12 +100,24 @@
     padding: 0.1rem;
     border: 0;
     background: transparent;
-    color: #d5d9e5;
+    color: #c5cbd5;
     cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
 }
 
 .review-star-button.active {
-    color: #f3a62f;
+    color: #e5a329;
+}
+
+.review-star-button:hover {
+    color: #e5a329;
+    transform: translateY(-1px);
+}
+
+.review-star-button:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid #327d70;
+    outline-offset: 2px;
 }
 
 .review-star-button svg {
@@ -112,8 +125,8 @@
 }
 
 .review-item {
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(79, 114, 255, 0.1);
+    padding: 1.1rem 0;
+    border-bottom: 1px solid #edf0f4;
 }
 
 .review-item:first-of-type {
@@ -134,7 +147,7 @@
 }
 
 .review-author {
-    color: #17213d;
+    color: #202b3c;
     font-weight: 700;
 }
 
@@ -145,7 +158,8 @@
 
 .review-comment {
     margin-top: 0.45rem;
-    color: #556080;
+    color: #4b5565;
+    line-height: 1.6;
 }
 
 .review-empty,
@@ -170,7 +184,7 @@
 @media (max-width: 576px) {
     .review-form,
     .review-list {
-        padding: 1rem;
+        padding: 1rem 1.1rem;
     }
 
     .review-item-header {
