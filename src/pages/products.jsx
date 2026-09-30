@@ -204,7 +204,7 @@ export default function Product({user}){
                     loading={nearbyLoading}
                 />
             )}
-            <Row xs={1} md={2} lg={3} className="g-4 products-grid">
+            <Row xs={1} md={2} lg={3} className="products-grid">
                 
                 {products.map((item)=>(
                     <Col key={item._id}>

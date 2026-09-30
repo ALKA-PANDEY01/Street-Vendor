@@ -26,7 +26,8 @@ body {
 
 .products-grid {
     --bs-gutter-x: 2.5rem;
-    row-gap: 2rem !important;
+    --bs-gutter-y: 0.5rem;
+    row-gap: 0.75rem !important;
 }
 
 .products-page-heading,

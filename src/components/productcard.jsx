@@ -16,12 +16,12 @@ export default function productCard({product}) {
             <Card.Title className="cardtitle doc">{product.name}</Card.Title>
             <Card.Text  className="productprice doc" >&#8377;{product.price}/{product.quantity}</Card.Text>
             <Card.Text  className="productvendor doc" >{product.vendorName}&nbsp; &nbsp; &nbsp;<AdjustIcon className={product.inStock ? "status-instock" : "status-outofstock"} /></Card.Text> 
+            <div className="product-card-ratings">
+              <RatingSummary targetType="product" targetId={product._id} compact />
+            </div>
           </Card.Body>
         </Card>
       </Link>
-      <div className="product-card-ratings">
-        <RatingSummary targetType="product" targetId={product._id} compact />
-      </div>
     </div>
   );
 }
